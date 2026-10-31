@@ -72,6 +72,25 @@ export async function createOrder(order) {
   return data
 }
 
+// Create an on-the-spot order for a walk-in customer; for admin
+export async function createWalkInOrder(order) {
+  const res = await fetch(`${API_URL}/orders/walk-in`, {
+    method: 'POST',
+    headers: getAuthHeaders({
+      'Content-Type': 'application/json'
+    }),
+    body: JSON.stringify(order)
+  })
+
+  const data = await res.json()
+
+  if (!res.ok) {
+    throw new Error(data.error || 'Failed to create walk-in order')
+  }
+
+  return data
+}
+
 // update  orders; for admin
 export async function updateOrder(id, updates) {
   const res = await fetch(`${API_URL}/orders/${id}`, {

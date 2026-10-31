@@ -6,6 +6,12 @@ import {
   deleteProduct
 } from './productsApi'
 
+export function getProductStock(product) {
+  const rawStock = product?.stock_quantity ?? product?.inventory?.stock_quantity
+  const stock = Number(rawStock)
+  return Number.isFinite(stock) ? Math.max(0, Math.floor(stock)) : 0
+}
+
 export function useProducts() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(false)

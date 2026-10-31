@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useProducts } from '../../features/products/useProducts'
+import { getProductStock, useProducts } from '../../features/products/useProducts'
 import { useCart } from '../../features/cart/useCart'
 
 function formatPeso(value) {
@@ -17,7 +17,7 @@ const HOME_SLIDES = Array.from({ length: 7 }, (_, index) => ({
 
 function CustomerHome() {
   const navigate = useNavigate()
-  const { addItem } = useCart()
+  const { cart, addItem } = useCart()
   const { products, fetchProducts, loading, error } = useProducts()
   const [activeSlide, setActiveSlide] = useState(0)
   const [isCarouselPaused, setIsCarouselPaused] = useState(false)
@@ -42,6 +42,13 @@ function CustomerHome() {
 
   function changeSlide(direction) {
     setActiveSlide((current) => (current + direction + HOME_SLIDES.length) % HOME_SLIDES.length)
+  }
+
+  function getCartQuantity(productId) {
+    return cart.reduce(
+      (total, item) => String(item.id) === String(productId) ? total + Number(item.quantity || 0) : total,
+      0
+    )
   }
 
   return (
@@ -155,20 +162,27 @@ function CustomerHome() {
           <p className="card p-10 text-center text-sm text-[#776F65]">No products are available right now.</p>
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {featuredProducts.map((product) => (
-              <article key={product.id} className="group overflow-hidden rounded-[1.1rem] border border-[#E2DBD0] bg-[#FFFDF9] transition hover:border-[#D3C9BB] hover:shadow-[0_18px_40px_rgba(33,30,26,.06)]">
-                <button type="button" onClick={() => navigate(`/customer/products/${product.id}`)} className="relative block aspect-[4/3] w-full overflow-hidden bg-[#EDE8DF] text-left">
-                  {product.image_url ? <img src={product.image_url} alt={product.name} className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]" /> : <div className="flex h-full items-end bg-[linear-gradient(145deg,#EDE8DF,#D8D0C3)] p-4"><span className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-[#776F65]">Pika-Chill</span></div>}
-                </button>
-                <div className="p-4">
-                  <button type="button" onClick={() => navigate(`/customer/products/${product.id}`)} className="display block text-left text-lg leading-snug text-[#211E1A] transition hover:text-[#B25F6C]">{product.name}</button>
-                  <div className="mt-4 flex items-center justify-between gap-3">
-                    <span className="text-sm font-semibold text-[#211E1A]">{formatPeso(product.price)}</span>
-                    <button type="button" onClick={() => addItem(product)} className="rounded-full border border-[#D3C9BB] px-3.5 py-1.5 text-[0.7rem] font-semibold text-[#211E1A] transition hover:border-[#211E1A] hover:bg-[#211E1A] hover:text-[#FFFDF9]">Add to cart</button>
+            {featuredProducts.map((product) => {
+              const stock = getProductStock(product)
+              const remaining = Math.max(0, stock - getCartQuantity(product.id))
+              const soldOut = !product.is_available || stock <= 0
+
+              return (
+                <article key={product.id} className="group overflow-hidden rounded-[1.1rem] border border-[#E2DBD0] bg-[#FFFDF9] transition hover:border-[#D3C9BB] hover:shadow-[0_18px_40px_rgba(33,30,26,.06)]">
+                  <button type="button" onClick={() => navigate(`/customer/products/${product.id}`)} className="relative block aspect-[4/3] w-full overflow-hidden bg-[#EDE8DF] text-left">
+                    {product.image_url ? <img src={product.image_url} alt={product.name} className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]" /> : <div className="flex h-full items-end bg-[linear-gradient(145deg,#EDE8DF,#D8D0C3)] p-4"><span className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-[#776F65]">Pika-Chill</span></div>}
+                    {soldOut && <span className="absolute left-3 top-3 rounded-full bg-[#211E1A]/85 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-[#FFFDF9]">Out of stock</span>}
+                  </button>
+                  <div className="p-4">
+                    <button type="button" onClick={() => navigate(`/customer/products/${product.id}`)} className="display block text-left text-lg leading-snug text-[#211E1A] transition hover:text-[#B25F6C]">{product.name}</button>
+                    <div className="mt-4 flex items-center justify-between gap-3">
+                      <span className="text-sm font-semibold text-[#211E1A]">{formatPeso(product.price)}</span>
+                      <button type="button" onClick={() => addItem(product)} disabled={soldOut || remaining <= 0} className="rounded-full border border-[#D3C9BB] px-3.5 py-1.5 text-[0.7rem] font-semibold text-[#211E1A] transition hover:border-[#211E1A] hover:bg-[#211E1A] hover:text-[#FFFDF9] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[#D3C9BB] disabled:hover:bg-transparent disabled:hover:text-[#211E1A]">{soldOut ? 'Out of stock' : remaining <= 0 ? 'Max in cart' : 'Add to cart'}</button>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              )
+            })}
           </div>
         )}
       </section>

@@ -15,13 +15,42 @@ function getSavedProfile() {
   }
 }
 
+const ORDER_TYPES = [
+  {
+    value: 'pickup',
+    label: 'Pickup',
+    description: 'Collect at the counter',
+    title: 'Pickup details',
+    details: 'In-store pickup and takeout. We’ll prepare your order after it is confirmed. Please pay in cash at the counter when you collect it.',
+    aside: 'Pickup or takeout at Pika-Chill. Cash payment at the counter.'
+  },
+  {
+    value: 'dine_in',
+    label: 'Dine-in',
+    description: 'Order on the spot',
+    title: 'Dine-in details',
+    details: 'We’ll prepare your order and serve it at your table. Please pay in cash at the counter when you’re done.',
+    aside: 'Dine-in at Pika-Chill. Cash payment at the counter.'
+  },
+  {
+    value: 'outdoor',
+    label: 'Outdoor seating',
+    description: 'Eat at an outdoor table',
+    title: 'Outdoor seating details',
+    details: 'We’ll prepare your order and serve it at an outdoor table. Please pay in cash at the counter when you’re done.',
+    aside: 'Outdoor seating at Pika-Chill. Cash payment at the counter.'
+  }
+]
+
 function Checkout() {
   const { cart, total, clearCart } = useCart()
   const profile = getSavedProfile()
+  const [orderType, setOrderType] = useState('pickup')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [placedOrder, setPlacedOrder] = useState(null)
   const navigate = useNavigate()
+  const selectedOrderType = ORDER_TYPES.find((type) => type.value === orderType) || ORDER_TYPES[0]
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -29,7 +58,10 @@ function Checkout() {
     setLoading(true)
     setError('')
     try {
-      const order = await createOrder({ items: cart.map((item) => ({ product_id: item.product_id || item.id, quantity: Number(item.quantity) })) })
+      const order = await createOrder({
+        items: cart.map((item) => ({ product_id: item.product_id || item.id, quantity: Number(item.quantity) })),
+        order_type: orderType
+      })
       clearCart()
       setPlacedOrder(order)
     } catch (err) {
@@ -46,7 +78,7 @@ function Checkout() {
           <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E8EDE7] text-2xl text-[#2F3B33]">✓</span>
           <p className="eyebrow mt-5">Thank you</p>
           <h1 className="display mt-2 text-[2.4rem] text-[#211E1A]">Order received</h1>
-          <p className="mt-3 text-sm leading-6 text-[#776F65]">We’ll prepare your order. Please pay at the counter when you collect it.</p>
+          <p className="mt-3 text-sm leading-6 text-[#776F65]">We’ll prepare your order for {selectedOrderType.label.toLowerCase()}. {selectedOrderType.value === 'pickup' ? 'Please pay at the counter when you collect it.' : 'Please pay at the counter when you’re done.'}</p>
           <p className="mt-5 text-sm font-medium text-[#211E1A]">Order #{String(placedOrder.id).slice(0, 8).toUpperCase()}</p>
           <button onClick={() => navigate('/customer/orders')} className="btn btn-primary mt-7">View my orders</button>
         </section>
@@ -59,15 +91,28 @@ function Checkout() {
       <button onClick={() => navigate('/customer/cart')} className="mb-6 text-[0.78rem] font-semibold text-[#776F65] transition hover:text-[#211E1A]">← Back to cart</button>
       <p className="eyebrow">Final step</p>
       <h1 className="display mt-3 text-[2.6rem] text-[#211E1A]">Checkout</h1>
-      <p className="mt-3 text-sm text-[#776F65]">Confirm your pickup or takeout order.</p>
+      <p className="mt-3 text-sm text-[#776F65]">Choose pickup, dine-in, or outdoor seating.</p>
 
       {!cart.length ? <section className="card mt-7 p-8"><p className="font-medium">Your cart is empty.</p><Link className="mt-4 inline-block text-sm font-semibold text-[#B25F6C]" to="/customer/menu">Browse menu</Link></section> : (
         <form onSubmit={handleSubmit} className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
           <div className="space-y-5">
             <section className="card p-6">
-              <h2 className="display text-xl text-[#211E1A]">Pickup details</h2>
+              <h2 className="display text-xl text-[#211E1A]">How would you like your order?</h2>
+              <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                {ORDER_TYPES.map((type) => (
+                  <label key={type.value} className={`cursor-pointer rounded-xl border p-4 transition ${orderType === type.value ? 'border-[#211E1A] bg-[#F1ECE4]' : 'border-[#E2DBD0] hover:border-[#D3C9BB]'}`}>
+                    <input type="radio" name="order_type" value={type.value} checked={orderType === type.value} onChange={(event) => setOrderType(event.target.value)} className="sr-only" />
+                    <span className="block text-sm font-semibold text-[#211E1A]">{type.label}</span>
+                    <span className="mt-1 block text-[0.72rem] leading-5 text-[#776F65]">{type.description}</span>
+                  </label>
+                ))}
+              </div>
+            </section>
+
+            <section className="card p-6">
+              <h2 className="display text-xl text-[#211E1A]">{selectedOrderType.title}</h2>
               <p className="mt-4 text-sm font-medium text-[#211E1A]">Pika-Chill — Main branch</p>
-              <p className="mt-2 text-sm leading-6 text-[#776F65]">In-store pickup and takeout. We’ll prepare your order after it is confirmed. Please pay in cash at the counter when you collect it.</p>
+              <p className="mt-2 text-sm leading-6 text-[#776F65]">{selectedOrderType.details}</p>
               <p className="mt-2 text-[0.72rem] text-[#948B7F]">Estimated preparation time: 20–30 minutes after confirmation.</p>
             </section>
 
@@ -94,8 +139,8 @@ function Checkout() {
           </div>
 
           <aside className="card h-fit p-6">
-            <h2 className="display text-xl text-[#211E1A]">Pickup &amp; payment</h2>
-            <p className="mt-3 text-sm leading-6 text-[#776F65]">Pickup or takeout at Pika-Chill. Cash payment at the counter.</p>
+            <h2 className="display text-xl text-[#211E1A]">{selectedOrderType.label} &amp; payment</h2>
+            <p className="mt-3 text-sm leading-6 text-[#776F65]">{selectedOrderType.aside}</p>
             <div className="mt-5 flex justify-between border-t border-[#E2DBD0] pt-4 text-base font-semibold text-[#211E1A]"><span>Total</span><span>{peso(total)}</span></div>
             {error && <p role="alert" className="mt-4 rounded-xl border border-[#E6C3BE] bg-[#F8E9E6] p-3 text-sm text-[#9F3A32]">{error}</p>}
             <button disabled={loading} className="btn btn-primary mt-5 w-full py-3">{loading ? 'Placing order…' : 'Place order'}</button>

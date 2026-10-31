@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import {
   getOrders,
   createOrder,
+  createWalkInOrder,
   updateOrder,
   cancelOrder
 } from './ordersApi'
@@ -34,6 +35,22 @@ export function useOrders() {
     try {
       const data = await createOrder(order)
       setOrders((previousOrders) => [...previousOrders, data])
+      return data
+    } catch (error) {
+      setError(error.message)
+      throw error
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const addWalkInOrder = useCallback(async function addWalkInOrder(order) {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const data = await createWalkInOrder(order)
+      setOrders((previousOrders) => [data, ...previousOrders])
       return data
     } catch (error) {
       setError(error.message)
@@ -93,6 +110,7 @@ export function useOrders() {
     orders,
     fetchOrders,
     addOrder,
+    addWalkInOrder,
     editOrder,
     cancelOrder: cancelExistingOrder,
     loading,

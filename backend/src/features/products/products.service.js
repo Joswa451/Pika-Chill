@@ -1,13 +1,23 @@
 const supabase = require('../../config/supabase')
 const { uploadProductImage, removeProductImage } = require('./productImages.service')
 
+function getStockQuantity(inventory) {
+  const record = Array.isArray(inventory) ? inventory[0] : inventory
+  const quantity = Number(record?.stock_quantity)
+  return Number.isFinite(quantity) ? Math.max(0, Math.floor(quantity)) : 0
+}
+
 async function getProducts() {
   const { data, error } = await supabase
     .from('products')
-    .select('*')
+    .select('*, inventory(stock_quantity)')
 
   if (error) throw error
-  return data
+
+  return (data || []).map(({ inventory, ...product }) => ({
+    ...product,
+    stock_quantity: getStockQuantity(inventory)
+  }))
 }
 
 async function createProduct(product, imageFile) {

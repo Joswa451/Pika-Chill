@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useProducts } from '../../features/products/useProducts'
+import { getProductStock, useProducts } from '../../features/products/useProducts'
 import { useCategories } from '../../features/categories/useCategories'
 import { useCart } from '../../features/cart/useCart'
 import { Link } from 'react-router-dom'
@@ -12,7 +12,7 @@ function formatPeso(value) {
 }
 
 function CustomerMenu() {
-  const { addItem } = useCart()
+  const { cart, addItem } = useCart()
   const {
     products,
     fetchProducts,
@@ -59,6 +59,13 @@ function CustomerMenu() {
   function getCategoryName(categoryId) {
     return categories.find((category) => String(category.id) === String(categoryId))?.name ||
       'Uncategorized'
+  }
+
+  function getCartQuantity(productId) {
+    return cart.reduce(
+      (total, item) => String(item.id) === String(productId) ? total + Number(item.quantity || 0) : total,
+      0
+    )
   }
 
   const loading = productsLoading || categoriesLoading
@@ -131,46 +138,54 @@ function CustomerMenu() {
           </p>
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {filteredProducts.map((product) => (
-              <article
-                key={product.id}
-                className="group flex flex-col overflow-hidden rounded-[1.1rem] border border-[#E2DBD0] bg-[#FFFDF9] transition hover:border-[#D3C9BB] hover:shadow-[0_18px_40px_rgba(33,30,26,.06)]"
-              >
-                <Link to={`/customer/products/${product.id}`} className="block h-44 overflow-hidden bg-[#EDE8DF]">
-                  {product.image_url ? (
-                    <img src={product.image_url} alt={product.name} className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]" />
-                  ) : (
-                    <div className="flex h-full items-end bg-[linear-gradient(145deg,#EDE8DF,#D8D0C3)] p-4"><span className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-[#776F65]">Pika-Chill</span></div>
-                  )}
-                </Link>
+            {filteredProducts.map((product) => {
+              const stock = getProductStock(product)
+              const remaining = Math.max(0, stock - getCartQuantity(product.id))
+              const soldOut = !product.is_available || stock <= 0
 
-                <div className="flex flex-1 flex-col p-4">
-                  <p className="text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-[#B25F6C]">
-                    {getCategoryName(product.category_id)}
-                  </p>
+              return (
+                <article
+                  key={product.id}
+                  className="group flex flex-col overflow-hidden rounded-[1.1rem] border border-[#E2DBD0] bg-[#FFFDF9] transition hover:border-[#D3C9BB] hover:shadow-[0_18px_40px_rgba(33,30,26,.06)]"
+                >
+                  <Link to={`/customer/products/${product.id}`} className="relative block h-44 overflow-hidden bg-[#EDE8DF]">
+                    {product.image_url ? (
+                      <img src={product.image_url} alt={product.name} className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]" />
+                    ) : (
+                      <div className="flex h-full items-end bg-[linear-gradient(145deg,#EDE8DF,#D8D0C3)] p-4"><span className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-[#776F65]">Pika-Chill</span></div>
+                    )}
+                    {soldOut && <span className="absolute left-3 top-3 rounded-full bg-[#211E1A]/85 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-[#FFFDF9]">Out of stock</span>}
+                  </Link>
 
-                  <Link to={`/customer/products/${product.id}`} className="display mt-1.5 block text-lg leading-snug text-[#211E1A] transition hover:text-[#B25F6C]">{product.name}</Link>
+                  <div className="flex flex-1 flex-col p-4">
+                    <p className="text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-[#B25F6C]">
+                      {getCategoryName(product.category_id)}
+                    </p>
 
-                  <p className="mt-2 min-h-10 flex-1 text-[0.8rem] leading-5 text-[#776F65]">
-                    {product.description || 'Freshly prepared to order.'}
-                  </p>
+                    <Link to={`/customer/products/${product.id}`} className="display mt-1.5 block text-lg leading-snug text-[#211E1A] transition hover:text-[#B25F6C]">{product.name}</Link>
 
-                  <div className="mt-4 flex items-center justify-between border-t border-[#E2DBD0] pt-4">
-                    <span className="text-sm font-semibold text-[#211E1A]">
-                      {formatPeso(product.price)}
-                    </span>
+                    <p className="mt-2 min-h-10 flex-1 text-[0.8rem] leading-5 text-[#776F65]">
+                      {product.description || 'Freshly prepared to order.'}
+                    </p>
 
-                    <button
-                      type="button"
-                      onClick={() => addItem(product)}
-                      className="rounded-full border border-[#D3C9BB] px-3.5 py-1.5 text-[0.7rem] font-semibold text-[#211E1A] transition hover:border-[#211E1A] hover:bg-[#211E1A] hover:text-[#FFFDF9]"
-                    >
-                      Add to cart
-                    </button>
+                    <div className="mt-4 flex items-center justify-between border-t border-[#E2DBD0] pt-4">
+                      <span className="text-sm font-semibold text-[#211E1A]">
+                        {formatPeso(product.price)}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => addItem(product)}
+                        disabled={soldOut || remaining <= 0}
+                        className="rounded-full border border-[#D3C9BB] px-3.5 py-1.5 text-[0.7rem] font-semibold text-[#211E1A] transition hover:border-[#211E1A] hover:bg-[#211E1A] hover:text-[#FFFDF9] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[#D3C9BB] disabled:hover:bg-transparent disabled:hover:text-[#211E1A]"
+                      >
+                        {soldOut ? 'Out of stock' : remaining <= 0 ? 'Max in cart' : 'Add to cart'}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              )
+            })}
           </div>
         )}
         </section>

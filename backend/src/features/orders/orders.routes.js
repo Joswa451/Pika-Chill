@@ -8,6 +8,7 @@ const {
   getAllOrders,
   getMyOrders,
   createOrder,
+  createWalkInOrder,
   updateOrder,
   deleteOrder
 } = require('./orders.controller')
@@ -17,6 +18,7 @@ router.get('/mine', requireAuth, getMyOrders)
 router.post('/', requireAuth, createOrder)
 
 // Admin routes
+router.post('/walk-in', requireAuth, requireAdmin, createWalkInOrder)
 router.get('/', requireAuth, requireAdmin, getAllOrders)
 router.put('/:id', requireAuth, requireAdmin, updateOrder)
 router.delete('/:id', requireAuth, requireAdmin, deleteOrder)

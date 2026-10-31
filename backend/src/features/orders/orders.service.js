@@ -1,5 +1,37 @@
 const supabase = require('../../config/supabase')
 
+const ORDER_TYPES = new Set(['pickup', 'dine_in', 'outdoor'])
+
+function normalizeOrderType(value) {
+  const type = String(value || 'pickup').trim().toLowerCase()
+  return ORDER_TYPES.has(type) ? type : 'pickup'
+}
+
+async function updateOrderType(orderId, orderType) {
+  const { error } = await supabase
+    .from('orders')
+    .update({ order_type: orderType })
+    .eq('id', orderId)
+
+  if (error && !['PGRST204', '42703'].includes(error.code)) {
+    throw error
+  }
+}
+
+async function getOrderById(orderId) {
+  const { data: order, error: orderError } = await supabase
+    .from('orders')
+    .select('*, order_items(*, product:products(name))')
+    .eq('id', orderId)
+    .single()
+
+  if (orderError) {
+    throw orderError
+  }
+
+  return order
+}
+
 // Get all orders with their order items
 async function getOrders() {
   const { data, error } = await supabase
@@ -30,7 +62,7 @@ async function getOrdersByCustomer(customerId) {
 }
 
 // Create order and deduct inventory
-async function createOrder(customer_id, items) {
+async function createOrder(customer_id, items, order_type = 'pickup') {
   const { data: orderId, error: createError } = await supabase.rpc(
     'place_order_with_inventory',
     {
@@ -43,17 +75,35 @@ async function createOrder(customer_id, items) {
     throw createError
   }
 
-  const { data: order, error: orderError } = await supabase
-    .from('orders')
-    .select('*, order_items(*, product:products(name))')
-    .eq('id', orderId)
-    .single()
+  await updateOrderType(orderId, normalizeOrderType(order_type))
+  return getOrderById(orderId)
+}
 
-  if (orderError) {
-    throw orderError
+// Create an on-the-spot order for a walk-in customer
+async function createWalkInOrder(admin_id, items, order_type = 'dine_in') {
+  const { data: orderId, error: createError } = await supabase.rpc(
+    'place_order_with_inventory',
+    {
+      p_customer_id: admin_id,
+      p_items: items
+    }
+  )
+
+  if (createError) {
+    throw createError
   }
 
-  return order
+  const { error: customerError } = await supabase
+    .from('orders')
+    .update({ customer_id: null })
+    .eq('id', orderId)
+
+  if (customerError) {
+    throw customerError
+  }
+
+  await updateOrderType(orderId, normalizeOrderType(order_type))
+  return getOrderById(orderId)
 }
 
 // Update order status or payment status
@@ -116,6 +166,7 @@ module.exports = {
   getOrders,
   getOrdersByCustomer,
   createOrder,
+  createWalkInOrder,
   updateOrder,
   deleteOrder
 }

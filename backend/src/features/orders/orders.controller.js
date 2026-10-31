@@ -2,6 +2,7 @@ const {
   getOrders,
   getOrdersByCustomer,
   createOrder: createOrderService,
+  createWalkInOrder: createWalkInOrderService,
   updateOrder: updateOrderService,
   deleteOrder: deleteOrderService
 } = require('./orders.service')
@@ -37,8 +38,8 @@ async function getMyOrders(req, res) {
 // Create an order for the signed-in customer
 async function createOrder(req, res) {
   try {
-    const { items } = req.body
-    const order = await createOrderService(req.user.id, items)
+    const { items, order_type } = req.body
+    const order = await createOrderService(req.user.id, items, order_type)
 
     try {
       await createNotification(req.user.id, order.id, 'We received your order. We’ll update you as it moves as it is prepared.')
@@ -48,6 +49,17 @@ async function createOrder(req, res) {
       console.error('Could not create order-received notification:', notificationError.message)
     }
 
+    res.status(201).json(order)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+}
+
+// Create an on-the-spot order for a walk-in customer
+async function createWalkInOrder(req, res) {
+  try {
+    const { items, order_type } = req.body
+    const order = await createWalkInOrderService(req.user.id, items, order_type)
     res.status(201).json(order)
   } catch (error) {
     res.status(500).json({ error: error.message })
@@ -129,6 +141,7 @@ module.exports = {
   getAllOrders,
   getMyOrders,
   createOrder,
+  createWalkInOrder,
   updateOrder,
   deleteOrder
 }

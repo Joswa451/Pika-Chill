@@ -8,6 +8,13 @@ const statusSteps = [
   { key: 'ready', label: 'Ready' }
 ]
 
+function getOrderTypeLabel(value) {
+  const type = String(value || 'pickup').toLowerCase()
+  if (type === 'dine_in') return 'Dine-in'
+  if (type === 'outdoor') return 'Outdoor seating'
+  return 'Pickup'
+}
+
 function formatPeso(value) {
   return `₱${(Number(value) || 0).toLocaleString('en-PH', {
     minimumFractionDigits: 0,
@@ -103,7 +110,7 @@ function MyOrders() {
           <div>
             <p className="eyebrow">Your order updates</p>
             <h1 className="display mt-3 text-[2.6rem] text-[#211E1A]">My orders</h1>
-            <p className="mt-3 text-sm text-[#776F65]">See your order status and when it’s ready for pickup.</p>
+            <p className="mt-3 text-sm text-[#776F65]">See your order status and how it’s progressing.</p>
           </div>
 
           <button type="button" onClick={loadOrders} disabled={loading} className="btn btn-outline btn-sm">
@@ -188,9 +195,11 @@ function MyOrders() {
                     {' — '}
                     Total {formatPeso(order.total_amount)}
                     {' · '}
+                    {getOrderTypeLabel(order.order_type)}
+                    {' · '}
                     {isCompleted
                       ? `Completed${order.updated_at ? ` ${formatDate(order.updated_at)}` : ''}`
-                      : 'Pay at counter on pickup'}
+                      : 'Pay at counter'}
                   </div>
                 </article>
               )

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { getProductStock } from '../products/useProducts'
 
 const CART_KEY = 'pikachill_cart'
 const CART_EVENT = 'pikachill-cart-updated'
@@ -49,12 +50,17 @@ export function useCart() {
   const addItem = useCallback((product, quantity = 1) => {
     const current = readCart()
     const id = product.id ?? product.product_id
-    if (id == null) return
+    if (id == null) return 0
+
+    const stock = getProductStock(product)
+    if (stock <= 0) return 0
+
     const amount = Math.max(1, Math.floor(Number(quantity) || 1))
-    const exists = current.some((item) => String(item.id) === String(id))
-    const next = exists
+    const existing = current.find((item) => String(item.id) === String(id))
+    const nextQuantity = Math.min(Number(existing?.quantity || 0) + amount, stock)
+    const next = existing
       ? current.map((item) => String(item.id) === String(id)
-          ? { ...item, quantity: Number(item.quantity || 0) + amount }
+          ? { ...item, quantity: nextQuantity, stock_quantity: stock }
           : item)
       : [...current, {
           id,
@@ -62,18 +68,31 @@ export function useCart() {
           name: product.name,
           price: Number(product.price),
           image_url: product.image_url || null,
-          quantity: amount
+          quantity: nextQuantity,
+          stock_quantity: stock
         }]
     saveCart(next)
     setCart(next)
+    return nextQuantity
   }, [])
 
-  const updateQuantity = useCallback((id, quantity) => {
+  const updateQuantity = useCallback((id, quantity, maxQuantity) => {
     const current = readCart()
+    const item = current.find((entry) => String(entry.id) === String(id))
+    if (!item) return
+
     const normalizedQuantity = Math.floor(Number(quantity))
-    const next = !Number.isFinite(normalizedQuantity) || normalizedQuantity <= 0
-      ? current.filter((item) => String(item.id) !== String(id))
-      : current.map((item) => String(item.id) === String(id) ? { ...item, quantity: normalizedQuantity } : item)
+    const rawLimit = maxQuantity ?? item.stock_quantity
+    const hasLimit = rawLimit !== undefined && rawLimit !== null && rawLimit !== ''
+    const limit = hasLimit ? getProductStock({ stock_quantity: rawLimit }) : Infinity
+    const nextQuantity = Number.isFinite(normalizedQuantity) && normalizedQuantity > 0
+      ? Math.min(normalizedQuantity, limit)
+      : 0
+    const next = nextQuantity <= 0
+      ? current.filter((entry) => String(entry.id) !== String(id))
+      : current.map((entry) => String(entry.id) === String(id)
+          ? { ...entry, quantity: nextQuantity, stock_quantity: limit }
+          : entry)
     saveCart(next)
     setCart(next)
   }, [])
