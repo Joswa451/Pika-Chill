@@ -1,114 +1,130 @@
-const supabase = require('../../config/supabase')
-const { createClient } = require('@supabase/supabase-js')
+
+const supabase = require('../../config/supabase');
+const { createClient } = require('@supabase/supabase-js');
 
 const ADMIN_EMAILS = new Set(
   (process.env.ADMIN_EMAILS || 'admin@ernesteats.com,admin@pikachill.com')
     .split(',')
-    .map((email) => email.trim().toLowerCase())
+    .map(email => email.trim().toLowerCase())
     .filter(Boolean)
-)
+);
 
 function createAuthClient() {
-  return createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_KEY,
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-        detectSessionInUrl: false
-      }
-    }
-  )
-}
+  const url = process.env.SUPABASE_URL?.trim();
+  const key = (
+    process.env.SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_SERVICE_KEY
+  )?.trim();
 
-function defaultFullName(user) {
-  return user.user_metadata?.full_name || user.email?.split('@')[0] || 'Pika-Chill user'
+  if (!url || !key) {
+    throw new Error('Missing Supabase URL or authentication key');
+  }
+
+  return createClient(url, key, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false
+    }
+  });
 }
 
 function roleForEmail(email) {
-  return ADMIN_EMAILS.has((email || '').toLowerCase()) ? 'admin' : 'customer'
+  return ADMIN_EMAILS.has((email || '').trim().toLowerCase())
+    ? 'admin'
+    : 'customer';
 }
 
 async function getOrCreateProfile(user) {
-  const { data: existingProfile, error: profileError } = await supabase
+  const { data: existingProfile, error: selectError } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
-    .maybeSingle()
+    .maybeSingle();
 
-  if (profileError) throw new Error(profileError.message)
-  if (existingProfile) return existingProfile
+  if (selectError) throw new Error(selectError.message);
+  if (existingProfile) return existingProfile;
 
-  const { data: createdProfile, error: createError } = await supabase
+  const { data, error } = await supabase
     .from('profiles')
     .insert({
       id: user.id,
-      full_name: defaultFullName(user),
+      full_name: user.user_metadata?.full_name ||
+        user.email?.split('@')[0] || 'User',
       contact_number: user.user_metadata?.contact_number || null,
       role: roleForEmail(user.email)
     })
     .select()
-    .single()
+    .single();
 
-  if (!createError) return createdProfile
-
-  const { data: racedProfile, error: racedError } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  if (!racedError && racedProfile) return racedProfile
-  throw new Error(createError.message)
+  if (error) throw new Error(error.message);
+  return data;
 }
 
-async function registerUser({ email, password, fullName, contactNumber }) {
-  const authClient = createAuthClient()
+async function registerUser({
+  email,
+  password,
+  fullName,
+  contactNumber
+}) {
+  const authClient = createAuthClient();
 
-  const { data: authData, error: authError } = await authClient.auth.signUp({
-    email,
-    password
-  })
+  const { data: authData, error: authError } =
+    await authClient.auth.signUp({
+      email: email.trim().toLowerCase(),
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          contact_number: contactNumber
+        }
+      }
+    });
 
-  if (authError) throw new Error(authError.message)
+  if (authError) throw new Error(authError.message);
+  if (!authData.user) throw new Error('User registration failed');
 
+  // Supabase may return no session when email confirmation is enabled.
+  // The user profile can be created by the database trigger if configured.
   const { data: profileData, error: profileError } = await supabase
     .from('profiles')
-    .insert({
+    .upsert({
       id: authData.user.id,
       full_name: fullName,
       contact_number: contactNumber,
       role: 'customer'
-    })
+    }, { onConflict: 'id' })
     .select()
-    .single()
+    .single();
 
-  if (profileError) throw new Error(profileError.message)
+  if (profileError) throw new Error(profileError.message);
 
   return {
     user: authData.user,
     profile: profileData
-  }
+  };
 }
 
 async function loginUser({ email, password }) {
-  const authClient = createAuthClient()
+  const authClient = createAuthClient();
 
   const { data, error } = await authClient.auth.signInWithPassword({
-    email,
+    email: email.trim().toLowerCase(),
     password
-  })
+  });
 
-  if (error) throw new Error(error.message)
+  if (error) throw new Error(error.message);
 
-  const profileData = await getOrCreateProfile(data.user)
+  const profile = await getOrCreateProfile(data.user);
 
   return {
     session: data.session,
     user: data.user,
-    profile: profileData
-  }
+    profile
+  };
 }
 
-module.exports = { registerUser, loginUser }
+module.exports = {
+  registerUser,
+  loginUser
+};
