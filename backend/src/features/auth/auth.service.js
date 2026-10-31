@@ -124,7 +124,29 @@ async function loginUser({ email, password }) {
   };
 }
 
+async function refreshUserSession(refreshToken) {
+  if (!refreshToken) throw new Error('Refresh token is required');
+
+  const authClient = createAuthClient();
+
+  const { data, error } = await authClient.auth.refreshSession({
+    refresh_token: refreshToken
+  });
+
+  if (error) throw new Error(error.message);
+  if (!data.session || !data.user) throw new Error('Could not refresh session');
+
+  const profile = await getOrCreateProfile(data.user);
+
+  return {
+    session: data.session,
+    user: data.user,
+    profile
+  };
+}
+
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  refreshUserSession
 };

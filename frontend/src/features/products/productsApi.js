@@ -1,19 +1,5 @@
 import { API_URL } from '../../lib/apiBase'
-
-function getAuthHeaders() {
-  let session
-  try {
-    session = JSON.parse(sessionStorage.getItem('session') || 'null')
-  } catch {
-    session = null
-  }
-
-  if (!session?.access_token) {
-    throw new Error('Please log in again to manage products.')
-  }
-
-  return { Authorization: `Bearer ${session.access_token}` }
-}
+import { authFetch } from '../../lib/authFetch'
 
 function createProductFormData(product, imageFile) {
   const formData = new FormData()
@@ -40,9 +26,8 @@ export async function getProducts() {
 
 // Create a product and let the backend upload its optional image.
 export async function createProduct(product, imageFile) {
-  const res = await fetch(`${API_URL}/products`, {
+  const res = await authFetch(`${API_URL}/products`, {
     method: 'POST',
-    headers: getAuthHeaders(),
     body: createProductFormData(product, imageFile)
   })
 
@@ -57,9 +42,8 @@ export async function createProduct(product, imageFile) {
 
 // Update a product and optionally replace its image through the backend.
 export async function updateProduct(id, product, imageFile) {
-  const res = await fetch(`${API_URL}/products/${id}`, {
+  const res = await authFetch(`${API_URL}/products/${id}`, {
     method: 'PUT',
-    headers: getAuthHeaders(),
     body: createProductFormData(product, imageFile)
   })
 
@@ -74,9 +58,8 @@ export async function updateProduct(id, product, imageFile) {
 
 // Delete a product
 export async function deleteProduct(id) {
-  const res = await fetch(`${API_URL}/products/${id}`, {
-    method: 'DELETE',
-    headers: getAuthHeaders()
+  const res = await authFetch(`${API_URL}/products/${id}`, {
+    method: 'DELETE'
   })
 
   const data = await res.json()

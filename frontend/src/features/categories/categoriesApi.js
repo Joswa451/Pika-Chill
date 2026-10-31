@@ -1,19 +1,5 @@
 import { API_URL } from '../../lib/apiBase'
-
-function getAuthHeaders(extraHeaders = {}) {
-  let session
-  try {
-    session = JSON.parse(sessionStorage.getItem('session') || 'null')
-  } catch {
-    session = null
-  }
-
-  if (!session?.access_token) {
-    throw new Error('Please log in again to manage categories.')
-  }
-
-  return { ...extraHeaders, Authorization: `Bearer ${session.access_token}` }
-}
+import { authFetch } from '../../lib/authFetch'
 
 // Get all categories
 export async function getCategories() {
@@ -29,11 +15,11 @@ export async function getCategories() {
 
 // Create a category
 export async function createCategory(category) {
-  const res = await fetch(`${API_URL}/categories`, {
+  const res = await authFetch(`${API_URL}/categories`, {
     method: 'POST',
-    headers: getAuthHeaders({
+    headers: {
       'Content-Type': 'application/json'
-    }),
+    },
     body: JSON.stringify(category)
   })
 
@@ -48,11 +34,11 @@ export async function createCategory(category) {
 
 // Update a category
 export async function updateCategory(id, category) {
-  const res = await fetch(`${API_URL}/categories/${id}`, {
+  const res = await authFetch(`${API_URL}/categories/${id}`, {
     method: 'PUT',
-    headers: getAuthHeaders({
+    headers: {
       'Content-Type': 'application/json'
-    }),
+    },
     body: JSON.stringify(category)
   })
 
@@ -67,9 +53,8 @@ export async function updateCategory(id, category) {
 
 // Delete a category
 export async function deleteCategory(id) {
-  const res = await fetch(`${API_URL}/categories/${id}`, {
-    method: 'DELETE',
-    headers: getAuthHeaders()
+  const res = await authFetch(`${API_URL}/categories/${id}`, {
+    method: 'DELETE'
   })
 
   const data = await res.json()

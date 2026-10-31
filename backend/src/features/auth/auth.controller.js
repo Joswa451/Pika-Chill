@@ -1,4 +1,4 @@
-const { registerUser, loginUser } = require('./auth.service')
+const { registerUser, loginUser, refreshUserSession } = require('./auth.service')
 
 async function register(req, res) {
 
@@ -57,7 +57,33 @@ async function login(req, res) {
 
 }
 
+async function refresh(req, res) {
+
+  try {
+
+    const { refreshToken } = req.body
+
+    const data = await refreshUserSession(refreshToken)
+
+    res.status(200).json({
+      message: 'Session refreshed',
+      session: data.session,
+      user: data.user,
+      profile: data.profile
+    })
+
+  } catch (err) {
+
+    res.status(401).json({
+      error: err.message
+    })
+
+  }
+
+}
+
 module.exports = {
   register,
-  login
+  login,
+  refresh
 }

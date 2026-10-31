@@ -1,23 +1,9 @@
 import { API_URL } from '../../lib/apiBase'
-
-function getAuthHeaders(extraHeaders = {}) {
-  let session
-  try {
-    session = JSON.parse(sessionStorage.getItem('session') || 'null')
-  } catch {
-    session = null
-  }
-
-  if (!session?.access_token) {
-    throw new Error('Please log in again to manage inventory.')
-  }
-
-  return { ...extraHeaders, Authorization: `Bearer ${session.access_token}` }
-}
+import { authFetch } from '../../lib/authFetch'
 
 // Get all inventory records
 export async function getInventory() {
-  const res = await fetch(`${API_URL}/inventory`, { headers: getAuthHeaders() })
+  const res = await authFetch(`${API_URL}/inventory`)
   const data = await res.json()
 
   if (!res.ok) {
@@ -29,11 +15,11 @@ export async function getInventory() {
 
 // Create an inventory record
 export async function createInventory(inventory) {
-  const res = await fetch(`${API_URL}/inventory`, {
+  const res = await authFetch(`${API_URL}/inventory`, {
     method: 'POST',
-    headers: getAuthHeaders({
+    headers: {
       'Content-Type': 'application/json'
-    }),
+    },
     body: JSON.stringify(inventory)
   })
 
@@ -48,11 +34,11 @@ export async function createInventory(inventory) {
 
 // Update an inventory record
 export async function updateInventory(id, inventory) {
-  const res = await fetch(`${API_URL}/inventory/${id}`, {
+  const res = await authFetch(`${API_URL}/inventory/${id}`, {
     method: 'PUT',
-    headers: getAuthHeaders({
+    headers: {
       'Content-Type': 'application/json'
-    }),
+    },
     body: JSON.stringify(inventory)
   })
 
@@ -67,9 +53,8 @@ export async function updateInventory(id, inventory) {
 
 // Delete an inventory record
 export async function deleteInventory(id) {
-  const res = await fetch(`${API_URL}/inventory/${id}`, {
-    method: 'DELETE',
-    headers: getAuthHeaders()
+  const res = await authFetch(`${API_URL}/inventory/${id}`, {
+    method: 'DELETE'
   })
 
   const data = await res.json()

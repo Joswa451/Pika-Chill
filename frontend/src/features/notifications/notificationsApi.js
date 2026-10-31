@@ -1,11 +1,5 @@
 import { API_URL } from '../../lib/apiBase'
-
-function authHeaders(extra = {}) {
-  let session
-  try { session = JSON.parse(sessionStorage.getItem('session') || 'null') } catch { session = null }
-  if (!session?.access_token) throw new Error('Please log in again to view your notifications.')
-  return { ...extra, Authorization: `Bearer ${session.access_token}` }
-}
+import { authFetch } from '../../lib/authFetch'
 
 async function parseResponse(res, fallback) {
   const data = await res.json()
@@ -14,16 +8,13 @@ async function parseResponse(res, fallback) {
 }
 
 export async function getMyNotifications() {
-  return parseResponse(await fetch(`${API_URL}/notifications/mine`, { headers: authHeaders() }), 'Failed to get notifications')
+  return parseResponse(await authFetch(`${API_URL}/notifications/mine`), 'Failed to get notifications')
 }
 
 // Consume the backend's authenticated Server-Sent Events stream. The backend
 // relays Supabase Realtime changes without exposing database write privileges.
 export async function streamMyNotifications(onNotification, signal) {
-  const res = await fetch(`${API_URL}/notifications/stream`, {
-    headers: authHeaders(),
-    signal
-  })
+  const res = await authFetch(`${API_URL}/notifications/stream`, { signal })
 
   if (!res.ok || !res.body) {
     await parseResponse(res, 'Could not connect to live notifications')
@@ -56,8 +47,7 @@ export async function streamMyNotifications(onNotification, signal) {
 }
 
 export async function markNotificationAsRead(id) {
-  return parseResponse(await fetch(`${API_URL}/notifications/${id}/read`, {
-    method: 'PATCH',
-    headers: authHeaders()
+  return parseResponse(await authFetch(`${API_URL}/notifications/${id}/read`, {
+    method: 'PATCH'
   }), 'Failed to mark notification as read')
 }

@@ -44,7 +44,6 @@ function AdminOrders() {
   const [profilesError, setProfilesError] = useState(null)
   const [actionNotice, setActionNotice] = useState('')
   const [showWalkInForm, setShowWalkInForm] = useState(false)
-  const [walkInType, setWalkInType] = useState('dine_in')
   const [walkInItems, setWalkInItems] = useState([])
   const [selectedProductId, setSelectedProductId] = useState('')
   const [selectedQuantity, setSelectedQuantity] = useState(1)
@@ -81,10 +80,11 @@ function AdminOrders() {
 
   const visibleOrders = useMemo(() => orders.map((order) => ({
     ...order,
+    isWalkIn: !order.customer_id,
     customerProfile: profilesById.get(String(order.customer_id))
   })).filter((order) => {
     const status = String(order.status || '').toLowerCase()
-    const matchesStatus = statusFilter === 'all' || status === statusFilter
+    const matchesStatus = statusFilter === 'all' || (!order.isWalkIn && status === statusFilter)
     const itemNames = (order.order_items || []).map((item) => item.product?.name || '').join(' ')
     const customerName = order.customerProfile?.full_name || ''
     const customerContact = order.customerProfile?.contact_number || ''
@@ -142,11 +142,9 @@ function AdminOrders() {
     setActionNotice('')
     try {
       await addWalkInOrder({
-        items: walkInItems.map((item) => ({ product_id: item.product_id, quantity: item.quantity })),
-        order_type: walkInType
+        items: walkInItems.map((item) => ({ product_id: item.product_id, quantity: item.quantity }))
       })
       setWalkInItems([])
-      setWalkInType('dine_in')
       setShowWalkInForm(false)
       setActionNotice('Walk-in order created.')
     } catch (error) {
@@ -230,15 +228,7 @@ function AdminOrders() {
               </div>
             )}
 
-            <div className="flex flex-wrap items-end justify-between gap-3 border-t border-[#E2DBD0] pt-4">
-              <label className="block text-sm font-medium text-[#211E1A]">
-                <span className="mb-1.5 block text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-[#948B7F]">Order type</span>
-                <select value={walkInType} onChange={(event) => setWalkInType(event.target.value)} className="rounded-xl border border-[#E2DBD0] bg-[#FFFDF9] px-4 py-2.5 text-sm outline-none focus:border-[#B25F6C]">
-                  <option value="dine_in">Dine-in / on the spot</option>
-                  <option value="outdoor">Outdoor seating</option>
-                  <option value="pickup">Pickup</option>
-                </select>
-              </label>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#E2DBD0] pt-4">
               <p className="text-sm font-semibold text-[#211E1A]">Total {formatPeso(walkInTotal)}</p>
               <button type="submit" disabled={!walkInItems.length || creatingWalkIn} className="rounded-lg bg-[#211E1A] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#3A352E] disabled:cursor-not-allowed disabled:opacity-50">{creatingWalkIn ? 'Creating…' : 'Create walk-in order'}</button>
             </div>
@@ -263,7 +253,7 @@ function AdminOrders() {
             <thead className="bg-[#F1ECE4] text-[#776F65]"><tr><th className="px-4 py-4 font-medium">Order ID</th><th className="px-4 py-4 font-medium">Customer</th><th className="px-4 py-4 font-medium">Type</th><th className="px-4 py-4 font-medium">Items</th><th className="px-4 py-4 font-medium">Total</th><th className="px-4 py-4 font-medium">Payment</th><th className="px-4 py-4 font-medium">Status</th><th className="px-4 py-4 font-medium">Action</th></tr></thead>
             <tbody>
               {visibleOrders.map((order) => {
-                const nextAction = getNextAction(order)
+                const nextAction = order.isWalkIn ? null : getNextAction(order)
                 const orderItems = order.order_items || []
                 const itemsText = orderItems.map((item) => {
                   const product = item.product || products.find((entry) => String(entry.id) === String(item.product_id))
@@ -277,8 +267,8 @@ function AdminOrders() {
                     <td className="max-w-[260px] px-4 py-4">{itemsText || 'No items'}</td>
                     <td className="px-4 py-4">{formatPeso(order.total_amount)}</td>
                     <td className="px-4 py-4 capitalize">{order.payment_status || 'Unpaid'}</td>
-                    <td className="px-4 py-4"><span className={`rounded-full px-3 py-1 text-xs font-bold capitalize ${getStatusClass(order.status)}`}>{order.status || 'Unknown'}</span></td>
-                    <td className="px-4 py-4"><div className="flex flex-wrap gap-2">{nextAction && <button type="button" disabled={pageLoading || updatingOrderId === order.id} onClick={() => handleStatusUpdate(order, nextAction.updates)} className="whitespace-nowrap rounded-lg bg-[#211E1A] px-4 py-2 text-xs font-bold text-white hover:bg-[#3A352E] disabled:cursor-not-allowed disabled:opacity-50">{updatingOrderId === order.id ? 'Updating…' : nextAction.label}</button>}{!['completed', 'cancelled'].includes(String(order.status || '').toLowerCase()) && <button type="button" disabled={pageLoading || updatingOrderId === order.id} onClick={() => handleCancelOrder(order)} className="whitespace-nowrap rounded-lg border border-red-300 px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50">Cancel</button>}</div></td>
+                    <td className="px-4 py-4">{order.isWalkIn ? '—' : <span className={`rounded-full px-3 py-1 text-xs font-bold capitalize ${getStatusClass(order.status)}`}>{order.status || 'Unknown'}</span>}</td>
+                    <td className="px-4 py-4"><div className="flex flex-wrap gap-2">{nextAction && <button type="button" disabled={pageLoading || updatingOrderId === order.id} onClick={() => handleStatusUpdate(order, nextAction.updates)} className="whitespace-nowrap rounded-lg bg-[#211E1A] px-4 py-2 text-xs font-bold text-white hover:bg-[#3A352E] disabled:cursor-not-allowed disabled:opacity-50">{updatingOrderId === order.id ? 'Updating…' : nextAction.label}</button>}{order.isWalkIn && !['completed', 'cancelled'].includes(String(order.status || '').toLowerCase()) && <button type="button" disabled={pageLoading || updatingOrderId === order.id} onClick={() => handleStatusUpdate(order, { status: 'completed', payment_status: 'paid' })} className="whitespace-nowrap rounded-lg bg-[#211E1A] px-4 py-2 text-xs font-bold text-white hover:bg-[#3A352E] disabled:cursor-not-allowed disabled:opacity-50">{updatingOrderId === order.id ? 'Updating…' : 'Mark as done'}</button>}{!['completed', 'cancelled'].includes(String(order.status || '').toLowerCase()) && <button type="button" disabled={pageLoading || updatingOrderId === order.id} onClick={() => handleCancelOrder(order)} className="whitespace-nowrap rounded-lg border border-red-300 px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50">Cancel</button>}</div></td>
                   </tr>
                 )
               })}

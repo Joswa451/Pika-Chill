@@ -61,6 +61,9 @@ async function getNotifications(customer_id) {
 
 // Create a notification
 async function createNotification(customer_id, order_id, message) {
+  // Walk-in orders have no customer account, so there is nobody to notify.
+  if (!customer_id) return null
+
   const { data, error } = await supabase
     .from('notifications')
     .insert({
