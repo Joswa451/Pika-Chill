@@ -1,25 +1,50 @@
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
-    export async function registerRequest({email,password,fullName,contactNumber}) {
-        const res = await fetch(`${API_URL}/auth/register`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({email,password,fullName,contactNumber}),
-        })
+const API_URL = (
+  import.meta.env.VITE_API_URL || 'https://pika-chill.onrender.com'
+).replace(/\/$/, '');
 
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.error || 'Registration failed')
-            return data
-    }
+export async function registerRequest({
+  email,
+  password,
+  fullName,
+  contactNumber
+}) {
+  const res = await fetch(`${API_URL}/api/auth/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      email,
+      password,
+      fullName,
+      contactNumber
+    })
+  });
 
-    export async function loginRequest({email, password}) {
-        const res = await fetch(`${API_URL}/auth/login`,{
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({email,password}),
-        })
+  const data = await res.json();
 
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.error || 'Login failed')
-            return data
-    }
+  if (!res.ok) {
+    throw new Error(data.error || 'Registration failed');
+  }
+
+  return data;
+}
+
+export async function loginRequest({ email, password }) {
+  const res = await fetch(`${API_URL}/api/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || 'Login failed');
+  }
+
+  return data;
+}
