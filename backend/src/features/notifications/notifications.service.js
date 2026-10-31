@@ -29,7 +29,7 @@ function addNotificationListener(customerId, listener) {
 
 function startNotificationRealtime() {
   supabase
-    .channel('ernesteats-notifications')
+    .channel('pikachill-notifications')
     .on('postgres_changes', {
       event: 'INSERT',
       schema: 'public',

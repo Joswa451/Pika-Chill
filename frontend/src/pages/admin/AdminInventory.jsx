@@ -25,7 +25,7 @@ function getStockStatus(stock, threshold) {
 
   return {
     label: 'Available',
-    style: 'bg-[#E0EEE5] text-[#315D4D]'
+    style: 'bg-[#E8EDE7] text-[#2F3B33]'
   }
 }
 
@@ -133,15 +133,15 @@ function AdminInventory() {
     <section>
       <header className="mb-7 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold">Inventory</h1>
-          <p className="mt-1 text-sm text-[#9A8061]">
+          <h1 className="display text-[2rem]">Inventory</h1>
+          <p className="mt-1 text-sm text-[#776F65]">
             Stock per menu item
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={() => { fetchInventory().catch(() => {}); fetchProducts().catch(() => {}) }} disabled={loading} className="rounded-lg border border-[#D8BD8F] bg-white px-4 py-2 text-sm font-bold text-[#756957] hover:text-[#241A12] disabled:opacity-50">{loading ? 'Refreshing…' : 'Refresh'}</button>
-          <button type="button" onClick={openAddForm} className="rounded-lg bg-[#2B211A] px-4 py-2 text-sm font-bold text-white hover:bg-[#44362B]">+ Update stock</button>
+          <button type="button" onClick={() => { fetchInventory().catch(() => {}); fetchProducts().catch(() => {}) }} disabled={loading} className="rounded-lg border border-[#D3C9BB] bg-[#FFFDF9] px-4 py-2 text-sm font-bold text-[#776F65] hover:text-[#211E1A] disabled:opacity-50">{loading ? 'Refreshing…' : 'Refresh'}</button>
+          <button type="button" onClick={openAddForm} className="rounded-lg bg-[#211E1A] px-4 py-2 text-sm font-bold text-white hover:bg-[#3A352E]">+ Update stock</button>
         </div>
       </header>
 
@@ -152,14 +152,14 @@ function AdminInventory() {
       )}
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search inventory" aria-label="Search inventory" className="w-full max-w-sm rounded-xl border border-[#E6DCCF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#E8531D]" />
-        <span className={`rounded-full px-3 py-1 text-xs font-bold ${lowStockCount ? 'bg-[#FBEAD3] text-[#8A5A0E]' : 'bg-[#E0EEE5] text-[#315D4D]'}`}>{lowStockCount} low or out of stock</span>
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search inventory" aria-label="Search inventory" className="w-full max-w-sm rounded-xl border border-[#E2DBD0] bg-[#FFFDF9] px-4 py-2.5 text-sm outline-none focus:border-[#B25F6C]" />
+        <span className={`rounded-full px-3 py-1 text-xs font-bold ${lowStockCount ? 'bg-[#F5EADF] text-[#8A5A2B]' : 'bg-[#E8EDE7] text-[#2F3B33]'}`}>{lowStockCount} low or out of stock</span>
       </div>
 
-      <section className="overflow-hidden rounded-2xl border border-[#EAD9BC] bg-white">
+      <section className="overflow-hidden rounded-[1.1rem] border border-[#E2DBD0] bg-[#FFFDF9]">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-            <thead className="bg-[#F2ECDD] text-[#927859]">
+            <thead className="bg-[#F1ECE4] text-[#776F65]">
               <tr>
                 <th className="px-4 py-4 font-medium">Product</th>
                 <th className="px-4 py-4 font-medium">Stock level</th>
@@ -177,21 +177,21 @@ function AdminInventory() {
                 const barWidth = Math.min((stock / maxStock) * 100, 100)
 
                 return (
-                  <tr key={item.id} className="border-t border-[#EAD8B9]">
+                  <tr key={item.id} className="border-t border-[#E2DBD0]">
                     <td className="px-4 py-4">
                       {getProductName(item.product_id)}
                     </td>
 
                     <td className="px-4 py-4">
                       <div className="flex min-w-[150px] items-center gap-3">
-                        <div className="h-2 w-28 overflow-hidden rounded-full bg-[#EAD8B9]">
+                        <div className="h-2 w-28 overflow-hidden rounded-full bg-[#E2DBD0]">
                           <div
                             className={`h-full rounded-full ${
                               stock <= 0
                                 ? 'bg-red-500'
                                 : stock <= threshold
                                   ? 'bg-orange-400'
-                                  : 'bg-[#315D4D]'
+                                  : 'bg-[#2F3B33]'
                             }`}
                             style={{ width: `${barWidth}%` }}
                           />
@@ -214,7 +214,7 @@ function AdminInventory() {
                       <button
                         type="button"
                         onClick={() => openEditForm(item)}
-                        className="rounded-lg border border-[#2B211A] px-3 py-1.5 text-xs font-bold hover:bg-[#F8F0DD]"
+                        className="rounded-lg border border-[#211E1A] px-3 py-1.5 text-xs font-bold hover:bg-[#F1ECE4]"
                       >
                         Update
                       </button>
@@ -227,7 +227,7 @@ function AdminInventory() {
                 <tr>
                   <td
                     colSpan="5"
-                    className="px-4 py-8 text-center text-[#9A8061]"
+                    className="px-4 py-8 text-center text-[#776F65]"
                   >
                     {inventory.length === 0 ? 'No inventory records found.' : 'No inventory items match this search.'}
                   </td>
@@ -238,7 +238,7 @@ function AdminInventory() {
         </div>
 
         {loading && (
-          <p className="border-t border-[#EAD8B9] px-4 py-3 text-sm text-[#9A8061]">
+          <p className="border-t border-[#E2DBD0] px-4 py-3 text-sm text-[#776F65]">
             Loading inventory…
           </p>
         )}
@@ -248,9 +248,9 @@ function AdminInventory() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <form
             onSubmit={handleSubmit}
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+            className="w-full max-w-md rounded-[1.1rem] bg-[#FFFDF9] p-6 shadow-xl"
           >
-            <h2 className="mb-5 text-xl font-extrabold">
+            <h2 className="mb-5 text-xl font-semibold">
               {editingId ? 'Update stock' : 'Add inventory record'}
             </h2>
 
@@ -263,7 +263,7 @@ function AdminInventory() {
                   onChange={handleChange}
                   required
                   disabled={Boolean(editingId)}
-                  className="mt-2 w-full rounded-xl border border-[#E6DCCF] bg-white px-4 py-3 outline-none focus:border-[#E8531D] disabled:bg-gray-100"
+                  className="mt-2 w-full rounded-xl border border-[#E2DBD0] bg-[#FFFDF9] px-4 py-3 outline-none focus:border-[#B25F6C] disabled:bg-gray-100"
                 >
                   <option value="">Choose a product</option>
 
@@ -292,7 +292,7 @@ function AdminInventory() {
                   value={form.stock_quantity}
                   onChange={handleChange}
                   required
-                  className="mt-2 w-full rounded-xl border border-[#E6DCCF] px-4 py-3 outline-none focus:border-[#E8531D]"
+                  className="mt-2 w-full rounded-xl border border-[#E2DBD0] px-4 py-3 outline-none focus:border-[#B25F6C]"
                 />
               </label>
 
@@ -306,7 +306,7 @@ function AdminInventory() {
                   value={form.low_stock_threshold}
                   onChange={handleChange}
                   required
-                  className="mt-2 w-full rounded-xl border border-[#E6DCCF] px-4 py-3 outline-none focus:border-[#E8531D]"
+                  className="mt-2 w-full rounded-xl border border-[#E2DBD0] px-4 py-3 outline-none focus:border-[#B25F6C]"
                 />
               </label>
             </div>
@@ -315,7 +315,7 @@ function AdminInventory() {
               <button
                 type="button"
                 onClick={closeForm}
-                className="rounded-lg border border-[#D9C9AF] px-4 py-2 text-sm font-bold"
+                className="rounded-lg border border-[#D3C9BB] px-4 py-2 text-sm font-bold"
               >
                 Cancel
               </button>
@@ -323,7 +323,7 @@ function AdminInventory() {
               <button
                 type="submit"
                 disabled={inventoryLoading}
-                className="rounded-lg bg-[#E8531D] px-4 py-2 text-sm font-bold text-white hover:bg-[#C94316] disabled:opacity-60"
+                className="rounded-lg bg-[#B25F6C] px-4 py-2 text-sm font-bold text-white hover:bg-[#8E4653] disabled:opacity-60"
               >
                 {inventoryLoading ? 'Saving…' : 'Save stock'}
               </button>

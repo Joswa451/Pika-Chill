@@ -10,39 +10,44 @@ function Cart() {
   const navigate = useNavigate()
 
   return (
-    <main className="mx-auto min-h-[60vh] max-w-7xl px-5 py-9 sm:px-8">
-      <p className="text-xs font-bold uppercase tracking-widest text-[#B23F14]">Pickup order</p>
-      <h1 className="mt-2 text-3xl font-extrabold">Your cart</h1>
-      <p className="mt-2 text-sm text-[#8A7A61]">Review your items before checkout.</p>
+    <main className="page-wrap min-h-[60vh] py-10 sm:py-14">
+      <p className="eyebrow">Pickup order</p>
+      <h1 className="display mt-3 text-[2.6rem] text-[#211E1A]">Your cart</h1>
+      <p className="mt-3 text-sm text-[#776F65]">Review your items before checkout.</p>
+
       {!cart.length ? (
-        <section className="mt-7 rounded-2xl border border-[#EAD9BC] bg-white p-10 text-center">
-          <p className="text-lg font-bold">Your cart is empty.</p>
-          <p className="mt-2 text-sm text-[#8A7A61]">Choose some items from the menu first.</p>
-          <Link to="/customer/menu" className="mt-5 inline-flex rounded-xl bg-[#E8531D] px-5 py-3 text-sm font-bold text-white">Browse menu</Link>
+        <section className="card mt-8 p-12 text-center">
+          <p className="display text-2xl text-[#211E1A]">Your cart is empty.</p>
+          <p className="mt-2 text-sm text-[#776F65]">Choose some items from the menu first.</p>
+          <Link to="/customer/menu" className="btn btn-primary btn-sm mt-6">Browse menu</Link>
         </section>
       ) : (
-        <div className="mt-7 grid gap-6 lg:grid-cols-[1fr_340px]">
-          <section className="overflow-hidden rounded-2xl border border-[#EAD9BC] bg-white">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
+          <section className="table-shell">
             {cart.map((item) => (
-              <article key={item.id} className="flex flex-col gap-4 border-b border-[#EAD9BC] p-5 last:border-0 sm:flex-row sm:items-center">
-                {item.image_url ? <img src={item.image_url} alt={item.name} className="h-24 w-full rounded-xl object-cover sm:w-28" /> : <div className="flex h-24 w-full items-end rounded-xl bg-[radial-gradient(ellipse_at_70%_30%,rgba(232,83,29,.2),transparent_45%),linear-gradient(145deg,#E8D9C1,#CDB999)] p-3 sm:w-28"><span className="text-[9px] font-bold uppercase tracking-widest text-[#604D39]">Fresh</span></div>}
-                <div className="min-w-0 flex-1"><h2 className="font-extrabold">{item.name}</h2><p className="mt-1 text-sm text-[#8A7A61]">{peso(item.price)} each</p></div>
-                <div className="flex items-center gap-3">
-                  <button onClick={() => updateQuantity(item.id, Number(item.quantity) - 1)} className="h-9 w-9 rounded-lg border border-[#EAD9BC] font-bold" aria-label="Decrease quantity">−</button>
-                  <span className="min-w-6 text-center font-bold">{item.quantity}</span>
-                  <button onClick={() => updateQuantity(item.id, Number(item.quantity) + 1)} className="h-9 w-9 rounded-lg border border-[#EAD9BC] font-bold" aria-label="Increase quantity">+</button>
+              <article key={item.id} className="flex flex-col gap-4 border-b border-[#E2DBD0] p-5 last:border-0 sm:flex-row sm:items-center">
+                {item.image_url ? <img src={item.image_url} alt={item.name} className="h-24 w-full rounded-xl object-cover sm:w-24" /> : <div className="flex h-24 w-full items-end rounded-xl bg-[linear-gradient(145deg,#EDE8DF,#D8D0C3)] p-3 sm:w-24"><span className="text-[0.55rem] font-semibold uppercase tracking-[0.16em] text-[#776F65]">Fresh</span></div>}
+                <div className="min-w-0 flex-1">
+                  <h2 className="display text-lg text-[#211E1A]">{item.name}</h2>
+                  <p className="mt-1 text-sm text-[#776F65]">{peso(item.price)} each</p>
                 </div>
-                <button onClick={() => removeItem(item.id)} className="text-left text-sm font-bold text-red-600 hover:underline">Remove</button>
+                <div className="flex items-center gap-1 rounded-full border border-[#E2DBD0] bg-[#FFFDF9] p-1">
+                  <button onClick={() => updateQuantity(item.id, Number(item.quantity) - 1)} className="h-8 w-8 rounded-full text-base font-medium transition hover:bg-[#F1ECE4]" aria-label="Decrease quantity">−</button>
+                  <span className="min-w-6 text-center text-sm font-semibold">{item.quantity}</span>
+                  <button onClick={() => updateQuantity(item.id, Number(item.quantity) + 1)} className="h-8 w-8 rounded-full text-base font-medium transition hover:bg-[#F1ECE4]" aria-label="Increase quantity">+</button>
+                </div>
+                <button onClick={() => removeItem(item.id)} className="text-left text-[0.72rem] font-semibold text-[#9F3A32] hover:underline">Remove</button>
               </article>
             ))}
           </section>
-          <aside className="h-fit rounded-2xl border border-[#EAD9BC] bg-white p-5">
-            <h2 className="text-lg font-extrabold">Order summary</h2>
-            <div className="mt-4 flex justify-between text-sm"><span>Items</span><span>{cart.reduce((n, item) => n + Number(item.quantity), 0)}</span></div>
-            <div className="mt-4 flex justify-between border-t border-[#EAD9BC] pt-4 font-extrabold"><span>Total</span><span>{peso(total)}</span></div>
-            <p className="mt-4 rounded-xl bg-[#FBF1DE] p-3 text-xs leading-5 text-[#756957]">Pickup only. Pay at the counter when you pick up your order.</p>
-            <button onClick={() => navigate('/customer/checkout')} className="mt-5 w-full rounded-xl bg-[#E8531D] px-5 py-3 text-sm font-bold text-white hover:bg-[#B23F14]">Continue to checkout</button>
-            <Link to="/customer/menu" className="mt-3 block text-center text-sm font-bold text-[#8A4A24]">Continue shopping</Link>
+
+          <aside className="card h-fit p-6">
+            <h2 className="display text-xl text-[#211E1A]">Order summary</h2>
+            <div className="mt-5 flex justify-between text-sm text-[#776F65]"><span>Items</span><span>{cart.reduce((n, item) => n + Number(item.quantity), 0)}</span></div>
+            <div className="mt-4 flex justify-between border-t border-[#E2DBD0] pt-4 text-base font-semibold text-[#211E1A]"><span>Total</span><span>{peso(total)}</span></div>
+            <p className="mt-5 rounded-xl border border-[#E2DBD0] bg-[#F1ECE4] p-3.5 text-[0.72rem] leading-5 text-[#776F65]">In-store pickup or takeout. Pay at the counter when you collect your order.</p>
+            <button onClick={() => navigate('/customer/checkout')} className="btn btn-primary mt-5 w-full py-3">Continue to checkout</button>
+            <Link to="/customer/menu" className="mt-3 block text-center text-[0.78rem] font-semibold text-[#B25F6C] hover:underline">Continue shopping</Link>
           </aside>
         </div>
       )}

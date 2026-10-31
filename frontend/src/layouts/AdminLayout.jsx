@@ -12,9 +12,9 @@ function AdminLayout() {
   }
 
   return (
-    <div className="admin-shell min-h-screen bg-[#F8F1DE] text-[#241A12] lg:flex">
+    <div className="admin-shell min-h-screen bg-[#F6F3ED] text-[#211E1A] lg:flex">
       <AdminSidebar onLogout={handleLogout} />
-      <main className="min-w-0 flex-1 px-5 py-7 sm:px-8 lg:px-10 lg:py-9">
+      <main className="min-w-0 flex-1 px-5 py-7 sm:px-8 lg:px-10 lg:py-10">
         <div className="mx-auto w-full max-w-[1440px]"><Outlet /></div>
       </main>
     </div>

@@ -50,18 +50,18 @@ function getStatusBadgeStyle(status) {
   const normalizedStatus = normalizeStatus(status)
 
   if (normalizedStatus === 'completed') {
-    return 'bg-emerald-100 text-emerald-800'
+    return 'bg-[#E8EDE7] text-[#2F3B33]'
   }
 
   if (normalizedStatus === 'cancelled') {
-    return 'bg-red-100 text-red-700'
+    return 'bg-[#F8E9E6] text-[#9F3A32]'
   }
 
   if (normalizedStatus === 'preparing' || normalizedStatus === 'ready' || normalizedStatus === 'ready for pickup') {
-    return 'bg-orange-100 text-orange-800'
+    return 'bg-[#F5EADF] text-[#8A5A2B]'
   }
 
-  return 'bg-[#F1EBDD] text-[#756957]'
+  return 'bg-[#F1ECE4] text-[#776F65]'
 }
 
 function getOrderItemName(item) {
@@ -89,45 +89,40 @@ function MyOrders() {
 
   useEffect(() => {
     Promise.resolve().then(loadOrders)
-    window.addEventListener('ernesteats-order-updated', loadOrders)
+    window.addEventListener('pikachill-order-updated', loadOrders)
 
     return () => {
-      window.removeEventListener('ernesteats-order-updated', loadOrders)
+      window.removeEventListener('pikachill-order-updated', loadOrders)
     }
   }, [loadOrders])
 
   return (
     <main className="min-h-[60vh]">
-      <div className="mx-auto max-w-[1440px] px-5 py-10 sm:px-8 lg:px-12">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-[#B23F14]">Your kitchen updates</p><h1 className="mt-2 text-3xl font-black tracking-tight">My orders</h1><p className="mt-2 text-sm text-[#817565]">See what’s cooking and when it’s ready for pickup.</p></div>
+      <div className="page-wrap py-10 sm:py-14">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-5 border-b border-[#E2DBD0] pb-6">
+          <div>
+            <p className="eyebrow">Your order updates</p>
+            <h1 className="display mt-3 text-[2.6rem] text-[#211E1A]">My orders</h1>
+            <p className="mt-3 text-sm text-[#776F65]">See your order status and when it’s ready for pickup.</p>
+          </div>
 
-          <button
-            type="button"
-            onClick={loadOrders}
-            disabled={loading}
-            className="rounded-lg border border-[#EAD9BC] px-4 py-2 text-sm font-bold hover:bg-[#FBF1DE] disabled:opacity-50"
-          >
+          <button type="button" onClick={loadOrders} disabled={loading} className="btn btn-outline btn-sm">
             {loading ? 'Refreshing…' : 'Refresh'}
           </button>
         </div>
 
         {error && (
-          <p className="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <p className="mb-5 rounded-xl border border-[#E6C3BE] bg-[#F8E9E6] p-4 text-sm text-[#9F3A32]">
             {error}
           </p>
         )}
 
         {loading ? (
-          <p className="py-12 text-center text-[#8A7A61]">
-            Loading your orders…
-          </p>
+          <p className="py-16 text-center text-sm text-[#776F65]">Loading your orders…</p>
         ) : !error && orders.length === 0 ? (
-          <section className="max-w-4xl rounded-2xl border border-[#EAD9BC] bg-white p-7 shadow-[0_8px_30px_rgba(66,45,22,.04)]">
-            <p className="font-bold">You don’t have any orders yet.</p>
-            <p className="mt-2 text-sm text-[#8A7A61]">
-              Your order status will appear here after you place an order.
-            </p>
+          <section className="card max-w-4xl p-8">
+            <p className="display text-xl text-[#211E1A]">You don’t have any orders yet.</p>
+            <p className="mt-2 text-sm text-[#776F65]">Your order status will appear here after you place an order.</p>
           </section>
         ) : (
           <section className="max-w-4xl space-y-4">
@@ -146,56 +141,34 @@ function MyOrders() {
                 .join(' · ')
 
               return (
-                <article
-                  key={order.id}
-                  className="rounded-2xl border border-[#EAD9BC] bg-white p-5 shadow-[0_8px_30px_rgba(66,45,22,.04)] sm:p-6"
-                >
+                <article key={order.id} className="card p-6">
                   <div className="flex flex-wrap items-center justify-between gap-3">
-                    <h2 className="font-extrabold text-[#756957]">
+                    <h2 className="text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-[#776F65]">
                       Order #{String(order.id).slice(0, 8).toUpperCase()}
                     </h2>
 
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-bold capitalize ${getStatusBadgeStyle(status)}`}
-                    >
+                    <span className={`rounded-full px-3 py-1 text-[0.66rem] font-semibold capitalize ${getStatusBadgeStyle(status)}`}>
                       {status}
                     </span>
                   </div>
 
                   {!isCompleted && !isCancelled && (
-                    <div className="mt-6 grid grid-cols-4">
+                    <div className="mt-7 grid grid-cols-4">
                       {statusSteps.map((step, index) => {
                         const isDone = index < currentStep
                         const isCurrent = index === currentStep
 
                         return (
-                          <div
-                            key={step.key}
-                            className="relative flex flex-col items-center text-center"
-                          >
+                          <div key={step.key} className="relative flex flex-col items-center text-center">
                             {index > 0 && (
-                              <span
-                                className={`absolute right-1/2 top-4 h-0.5 w-full ${
-                                  index <= currentStep
-                                    ? 'bg-[#355E4D]'
-                                    : 'bg-[#EAD9BC]'
-                                }`}
-                              />
+                              <span className={`absolute right-1/2 top-4 h-px w-full ${index <= currentStep ? 'bg-[#2F3B33]' : 'bg-[#E2DBD0]'}`} />
                             )}
 
-                            <span
-                              className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white ${
-                                isDone
-                                  ? 'bg-[#355E4D]'
-                                  : isCurrent
-                                    ? 'bg-[#E8531D]'
-                                    : 'bg-[#EAD9BC]'
-                              }`}
-                            >
+                            <span className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full text-[0.68rem] font-semibold ${isDone ? 'bg-[#2F3B33] text-white' : isCurrent ? 'bg-[#B25F6C] text-white' : 'bg-[#F1ECE4] text-[#948B7F]'}`}>
                               {isDone ? '✓' : index + 1}
                             </span>
 
-                            <span className="mt-2 text-xs text-[#756957]">
+                            <span className={`mt-2 text-[0.7rem] ${isCurrent ? 'font-semibold text-[#211E1A]' : 'text-[#776F65]'}`}>
                               {step.label}
                             </span>
                           </div>
@@ -205,12 +178,12 @@ function MyOrders() {
                   )}
 
                   {isCancelled && (
-                    <p className="mt-5 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+                    <p className="mt-5 rounded-xl bg-[#F8E9E6] p-3 text-sm text-[#9F3A32]">
                       This order was cancelled.
                     </p>
                   )}
 
-                  <div className="mt-5 border-t border-[#EAD9BC] pt-4 text-sm leading-6 text-[#8A7A61]">
+                  <div className="mt-5 border-t border-[#E2DBD0] pt-4 text-[0.8rem] leading-6 text-[#776F65]">
                     {itemSummary || 'Order items'}
                     {' — '}
                     Total {formatPeso(order.total_amount)}

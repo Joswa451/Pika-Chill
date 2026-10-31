@@ -33,8 +33,8 @@ function CustomerLayout() {
       try {
         await streamMyNotifications(() => {
           if (!active) return
-          window.dispatchEvent(new Event('ernesteats-notifications-updated'))
-          window.dispatchEvent(new Event('ernesteats-order-updated'))
+          window.dispatchEvent(new Event('pikachill-notifications-updated'))
+          window.dispatchEvent(new Event('pikachill-order-updated'))
         }, controller.signal)
       } catch (error) {
         if (active && error.name !== 'AbortError') {
@@ -44,14 +44,14 @@ function CustomerLayout() {
       if (active) retryTimer = window.setTimeout(connectToLiveNotifications, 3000)
     }
     connectToLiveNotifications()
-    window.addEventListener('ernesteats-notifications-updated', refreshNotifications)
-    window.addEventListener('ernesteats-profile-updated', refreshProfile)
+    window.addEventListener('pikachill-notifications-updated', refreshNotifications)
+    window.addEventListener('pikachill-profile-updated', refreshProfile)
     return () => {
       active = false
       controller?.abort()
       window.clearTimeout(retryTimer)
-      window.removeEventListener('ernesteats-notifications-updated', refreshNotifications)
-      window.removeEventListener('ernesteats-profile-updated', refreshProfile)
+      window.removeEventListener('pikachill-notifications-updated', refreshNotifications)
+      window.removeEventListener('pikachill-profile-updated', refreshProfile)
     }
   }, [])
 
@@ -61,7 +61,7 @@ function CustomerLayout() {
   }
 
   return (
-    <div className="customer-shell flex min-h-screen flex-col bg-[#FBF8F2] text-[#241A12]">
+    <div className="customer-shell flex min-h-screen flex-col bg-[#F6F3ED] text-[#211E1A]">
       <CustomerNavbar cartCount={count} cartTotal={total} unreadCount={unreadCount} profile={profile} onLogout={handleLogout} />
       <div className="flex-1"><Outlet /></div>
       <CustomerFooter />

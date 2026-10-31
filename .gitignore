@@ -4,6 +4,8 @@
 .env.*.local
 frontend/.env
 backend/.env
+frontend/frontend.env
+backend/backend.env
 
 # Dependencies
 node_modules/

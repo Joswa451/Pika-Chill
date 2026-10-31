@@ -41,7 +41,7 @@ async function createOrder(req, res) {
     const order = await createOrderService(req.user.id, items)
 
     try {
-      await createNotification(req.user.id, order.id, 'We received your order. We’ll update you as it moves through the kitchen.')
+      await createNotification(req.user.id, order.id, 'We received your order. We’ll update you as it moves as it is prepared.')
     } catch (notificationError) {
       // The order and stock transaction succeeded; don't tell the customer it
       // failed and encourage them to submit a duplicate order.

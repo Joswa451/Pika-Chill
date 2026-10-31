@@ -40,34 +40,66 @@ function Checkout() {
   }
 
   if (placedOrder) {
-    return <main className="mx-auto min-h-[60vh] max-w-3xl px-5 py-12"><section className="rounded-2xl border border-[#EAD9BC] bg-white p-8 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl text-emerald-800">✓</span><h1 className="mt-4 text-2xl font-extrabold">Order received!</h1><p className="mt-2 text-sm leading-6 text-[#756957]">We’ll prepare your order. Please pay at the counter when you pick it up.</p><p className="mt-4 text-sm">Order #{String(placedOrder.id).slice(0, 8).toUpperCase()}</p><button onClick={() => navigate('/customer/orders')} className="mt-6 rounded-xl bg-[#E8531D] px-5 py-3 text-sm font-bold text-white">View my orders</button></section></main>
+    return (
+      <main className="page-wrap min-h-[60vh] py-14">
+        <section className="mx-auto max-w-xl rounded-[1.4rem] border border-[#E2DBD0] bg-[#FFFDF9] p-10 text-center">
+          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E8EDE7] text-2xl text-[#2F3B33]">✓</span>
+          <p className="eyebrow mt-5">Thank you</p>
+          <h1 className="display mt-2 text-[2.4rem] text-[#211E1A]">Order received</h1>
+          <p className="mt-3 text-sm leading-6 text-[#776F65]">We’ll prepare your order. Please pay at the counter when you collect it.</p>
+          <p className="mt-5 text-sm font-medium text-[#211E1A]">Order #{String(placedOrder.id).slice(0, 8).toUpperCase()}</p>
+          <button onClick={() => navigate('/customer/orders')} className="btn btn-primary mt-7">View my orders</button>
+        </section>
+      </main>
+    )
   }
 
   return (
-    <main className="mx-auto min-h-[60vh] max-w-7xl px-5 py-9 sm:px-8">
-      <button onClick={() => navigate('/customer/cart')} className="mb-5 text-sm font-bold text-[#8A4A24]">← Back to cart</button>
-      <h1 className="text-3xl font-extrabold">Checkout</h1>
-      <p className="mt-2 text-sm text-[#8A7A61]">Confirm your pickup order.</p>
-      {!cart.length ? <section className="mt-6 rounded-2xl bg-white p-8"><p className="font-bold">Your cart is empty.</p><Link className="mt-4 inline-block text-[#B23F14]" to="/customer/menu">Browse menu</Link></section> : (
-        <form onSubmit={handleSubmit} className="mt-7 grid gap-6 lg:grid-cols-[1fr_360px]">
+    <main className="page-wrap min-h-[60vh] py-10 sm:py-14">
+      <button onClick={() => navigate('/customer/cart')} className="mb-6 text-[0.78rem] font-semibold text-[#776F65] transition hover:text-[#211E1A]">← Back to cart</button>
+      <p className="eyebrow">Final step</p>
+      <h1 className="display mt-3 text-[2.6rem] text-[#211E1A]">Checkout</h1>
+      <p className="mt-3 text-sm text-[#776F65]">Confirm your pickup or takeout order.</p>
+
+      {!cart.length ? <section className="card mt-7 p-8"><p className="font-medium">Your cart is empty.</p><Link className="mt-4 inline-block text-sm font-semibold text-[#B25F6C]" to="/customer/menu">Browse menu</Link></section> : (
+        <form onSubmit={handleSubmit} className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
           <div className="space-y-5">
-            <section className="rounded-2xl border border-[#EAD9BC] bg-white p-5">
-              <h2 className="text-lg font-extrabold">Pickup details</h2>
-              <p className="mt-3 text-sm font-semibold">Ernest Kitchen &amp; Streetfood — Main branch</p>
-              <p className="mt-1 text-sm leading-6 text-[#756957]">Pickup only. We’ll prepare your order after it is confirmed. Please pay in cash at the counter when you pick it up.</p>
-              <p className="mt-2 text-xs text-[#8A7A61]">Estimated preparation time: 20–30 minutes after confirmation.</p>
+            <section className="card p-6">
+              <h2 className="display text-xl text-[#211E1A]">Pickup details</h2>
+              <p className="mt-4 text-sm font-medium text-[#211E1A]">Pika-Chill — Main branch</p>
+              <p className="mt-2 text-sm leading-6 text-[#776F65]">In-store pickup and takeout. We’ll prepare your order after it is confirmed. Please pay in cash at the counter when you collect it.</p>
+              <p className="mt-2 text-[0.72rem] text-[#948B7F]">Estimated preparation time: 20–30 minutes after confirmation.</p>
             </section>
-            <section className="rounded-2xl border border-[#EAD9BC] bg-white p-5">
-              <h2 className="text-lg font-extrabold">Contact details</h2>
-              <dl className="mt-3 grid gap-3 sm:grid-cols-2">
-                <div><dt className="text-xs font-semibold uppercase tracking-wide text-[#8A7A61]">Full name</dt><dd className="mt-1 text-sm font-semibold">{profile.full_name || 'Add your name in My profile'}</dd></div>
-                <div><dt className="text-xs font-semibold uppercase tracking-wide text-[#8A7A61]">Contact number</dt><dd className="mt-1 text-sm font-semibold">{profile.contact_number || 'Add your number in My profile'}</dd></div>
+
+            <section className="card p-6">
+              <h2 className="display text-xl text-[#211E1A]">Contact details</h2>
+              <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+                <div><dt className="text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-[#948B7F]">Full name</dt><dd className="mt-1.5 text-sm font-medium text-[#211E1A]">{profile.full_name || 'Add your name in My profile'}</dd></div>
+                <div><dt className="text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-[#948B7F]">Contact number</dt><dd className="mt-1.5 text-sm font-medium text-[#211E1A]">{profile.contact_number || 'Add your number in My profile'}</dd></div>
               </dl>
-              <Link to="/customer/profile" className="mt-3 inline-block text-sm font-bold text-[#B23F14] hover:underline">Update profile</Link>
+              <Link to="/customer/profile" className="mt-4 inline-block text-[0.78rem] font-semibold text-[#B25F6C] hover:underline">Update profile</Link>
             </section>
-            <section className="rounded-2xl border border-[#EAD9BC] bg-white p-5"><h2 className="text-lg font-extrabold">Order items</h2><div className="mt-3 divide-y divide-[#EAD9BC]">{cart.map((item) => <div key={item.id} className="flex justify-between gap-4 py-4"><div><p className="font-bold">{item.name}</p><p className="mt-1 text-sm text-[#8A7A61]">Quantity: {item.quantity}</p></div><p className="shrink-0 font-semibold">{peso(Number(item.price) * Number(item.quantity))}</p></div>)}</div></section>
+
+            <section className="card p-6">
+              <h2 className="display text-xl text-[#211E1A]">Order items</h2>
+              <div className="mt-3 divide-y divide-[#E2DBD0]">
+                {cart.map((item) => (
+                  <div key={item.id} className="flex justify-between gap-4 py-4">
+                    <div><p className="text-sm font-medium text-[#211E1A]">{item.name}</p><p className="mt-1 text-[0.78rem] text-[#776F65]">Quantity: {item.quantity}</p></div>
+                    <p className="shrink-0 text-sm font-medium text-[#211E1A]">{peso(Number(item.price) * Number(item.quantity))}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
-          <aside className="h-fit rounded-2xl border border-[#EAD9BC] bg-white p-5"><h2 className="text-lg font-extrabold">Pickup and payment</h2><p className="mt-3 text-sm leading-6 text-[#756957]">Pickup at Ernest Kitchen &amp; Streetfood. Cash payment at the counter.</p><div className="mt-5 flex justify-between border-t border-[#EAD9BC] pt-4 font-extrabold"><span>Total</span><span>{peso(total)}</span></div>{error && <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}<button disabled={loading} className="mt-5 w-full rounded-xl bg-[#E8531D] px-5 py-3 text-sm font-bold text-white disabled:opacity-50">{loading ? 'Placing order…' : 'Place order'}</button></aside>
+
+          <aside className="card h-fit p-6">
+            <h2 className="display text-xl text-[#211E1A]">Pickup &amp; payment</h2>
+            <p className="mt-3 text-sm leading-6 text-[#776F65]">Pickup or takeout at Pika-Chill. Cash payment at the counter.</p>
+            <div className="mt-5 flex justify-between border-t border-[#E2DBD0] pt-4 text-base font-semibold text-[#211E1A]"><span>Total</span><span>{peso(total)}</span></div>
+            {error && <p role="alert" className="mt-4 rounded-xl border border-[#E6C3BE] bg-[#F8E9E6] p-3 text-sm text-[#9F3A32]">{error}</p>}
+            <button disabled={loading} className="btn btn-primary mt-5 w-full py-3">{loading ? 'Placing order…' : 'Place order'}</button>
+          </aside>
         </form>
       )}
     </main>

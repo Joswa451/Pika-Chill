@@ -1,41 +1,144 @@
 import { NavLink } from 'react-router-dom'
 
+function SidebarIcon({ children }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-[18px] w-[18px] shrink-0"
+      aria-hidden="true"
+    >
+      {children}
+    </svg>
+  )
+}
+
 const sections = [
-  { label: 'Overview', to: '/admin', end: true },
-  { label: 'Orders', to: '/admin/orders' },
-  { label: 'Products', to: '/admin/products' },
-  { label: 'Categories', to: '/admin/categories' },
-  { label: 'Inventory', to: '/admin/inventory' },
-  { label: 'Customers', to: '/admin/customers' },
-  { label: 'Notifications', to: '/admin/notifications' },
-  { label: 'Sales / Reports', to: '/admin/reports' }
+  {
+    label: 'Overview',
+    to: '/admin',
+    end: true,
+    icon: (
+      <SidebarIcon>
+        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="3" width="7" height="7" rx="1.5" />
+        <rect x="3" y="14" width="7" height="7" rx="1.5" />
+        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+      </SidebarIcon>
+    )
+  },
+  {
+    label: 'Orders',
+    to: '/admin/orders',
+    icon: (
+      <SidebarIcon>
+        <rect x="5" y="4" width="14" height="17" rx="2" />
+        <path d="M9 4V3h6v1M9 9h6M9 13h6M9 17h4" />
+      </SidebarIcon>
+    )
+  },
+  {
+    label: 'Products',
+    to: '/admin/products',
+    icon: (
+      <SidebarIcon>
+        <path d="m21 8-9-5-9 5 9 5 9-5Z" />
+        <path d="M3 8v8l9 5 9-5V8M12 13v8" />
+      </SidebarIcon>
+    )
+  },
+  {
+    label: 'Categories',
+    to: '/admin/categories',
+    icon: (
+      <SidebarIcon>
+        <path d="m20 13-7 7-9-9V4h7l9 9Z" />
+        <circle cx="8" cy="8" r="1.5" />
+      </SidebarIcon>
+    )
+  },
+  {
+    label: 'Inventory',
+    to: '/admin/inventory',
+    icon: (
+      <SidebarIcon>
+        <path d="m12 3-9 5 9 5 9-5-9-5Z" />
+        <path d="m3 12 9 5 9-5M3 16l9 5 9-5" />
+      </SidebarIcon>
+    )
+  },
+  {
+    label: 'Customers',
+    to: '/admin/customers',
+    icon: (
+      <SidebarIcon>
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+      </SidebarIcon>
+    )
+  },
+  {
+    label: 'Notifications',
+    to: '/admin/notifications',
+    icon: (
+      <SidebarIcon>
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      </SidebarIcon>
+    )
+  },
+  {
+    label: 'Sales / Reports',
+    to: '/admin/reports',
+    icon: (
+      <SidebarIcon>
+        <path d="M3 3v18h18" />
+        <rect x="7" y="12" width="3" height="6" rx="1" />
+        <rect x="12" y="8" width="3" height="10" rx="1" />
+        <rect x="17" y="5" width="3" height="13" rx="1" />
+      </SidebarIcon>
+    )
+  }
 ]
 
 function AdminSidebar({ onLogout }) {
   return (
-    <aside className="admin-sidebar flex w-full shrink-0 flex-col border-b border-[#E8531D] bg-[#241A12] text-white lg:sticky lg:top-0 lg:h-screen lg:w-[264px] lg:border-b-0 lg:border-r">
-      <NavLink to="/admin" end className="flex h-[88px] shrink-0 items-center gap-3 border-b border-white/10 px-7">
-        <img src="/logo/logo1.png" alt="" className="h-9 w-9 rounded-lg object-cover" />
-        <span className="font-semibold tracking-tight">Ernest Eats <span className="ml-1 text-xs font-normal text-white/50">ADMIN</span></span>
+    <aside className="admin-sidebar flex w-full shrink-0 flex-col border-b border-[#3A352E] bg-[#211E1A] text-white lg:sticky lg:top-0 lg:h-screen lg:w-[264px] lg:border-b-0 lg:border-r">
+      <NavLink to="/admin" end className="flex h-[88px] shrink-0 items-center gap-3 border-b border-white/10 px-6">
+        <img src="/logo/new-logo.jpg" alt="Pika-Chill" className="h-10 w-10 rounded-full border border-white/15 object-cover" />
+        <span className="leading-tight">
+          <span className="display block text-[1.05rem]">Pika-Chill</span>
+          <span className="block text-[0.55rem] font-semibold uppercase tracking-[0.22em] text-[#C6A15B]">Admin studio</span>
+        </span>
       </NavLink>
 
-      <nav aria-label="Admin navigation" className="flex gap-1 overflow-x-auto p-2 lg:flex-1 lg:flex-col lg:gap-0 lg:overflow-y-auto lg:overflow-x-hidden lg:pt-4">
-        {sections.map(({ label, to, end }) => (
+      <nav aria-label="Admin navigation" className="flex gap-1 overflow-x-auto p-2 lg:flex-1 lg:flex-col lg:gap-0.5 lg:overflow-y-auto lg:overflow-x-hidden lg:p-4">
+        {sections.map(({ label, to, end, icon }) => (
           <NavLink
             key={to}
             to={to}
             end={end}
-            className={({ isActive }) => `flex min-h-[48px] shrink-0 items-center gap-3 px-4 text-left text-sm transition-colors lg:w-full lg:px-6 ${isActive ? 'admin-nav-active font-semibold text-white' : 'text-[#C9AE8E] hover:bg-white/5 hover:text-white'}`}
+            className={({ isActive }) => `flex min-h-[46px] shrink-0 items-center gap-3 rounded-lg px-4 text-left text-[0.82rem] transition-colors lg:w-full ${isActive ? 'admin-nav-active font-medium text-white' : 'text-[#B7AEA2] hover:bg-white/5 hover:text-white'}`}
           >
             {({ isActive }) => <>
-              <span className={`h-2 w-2 rounded-full ${isActive ? 'bg-[#E1A16B]' : 'bg-[#65503D]'}`} aria-hidden="true" />
+              <span className={isActive ? 'text-[#C6A15B]' : 'text-[#7E766B]'}>{icon}</span>
               <span className="whitespace-nowrap">{label}</span>
             </>}
           </NavLink>
         ))}
       </nav>
 
-      <button type="button" onClick={onLogout} className="m-3 shrink-0 rounded-lg border border-[#80664D] px-4 py-2.5 text-sm text-[#F7EEE0] transition hover:bg-white/10 lg:mx-5 lg:mb-5 lg:mt-auto">
+      <div className="hidden border-t border-white/10 p-4 lg:block">
+        <button type="button" onClick={onLogout} className="w-full rounded-full border border-white/15 px-4 py-2.5 text-[0.78rem] text-[#F1ECE4] transition hover:bg-white/10">
+          Log out
+        </button>
+      </div>
+      <button type="button" onClick={onLogout} className="m-3 shrink-0 rounded-full border border-white/15 px-4 py-2.5 text-sm text-[#F1ECE4] transition hover:bg-white/10 lg:hidden">
         Log out
       </button>
     </aside>

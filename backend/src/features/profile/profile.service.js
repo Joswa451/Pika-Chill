@@ -1,8 +1,9 @@
 const supabase = require('../../config/supabase')
 
 async function getProfile(id) {
-  const { data, error } = await supabase.from('profiles').select('id, full_name, contact_number, role').eq('id', id).single()
+  const { data, error } = await supabase.from('profiles').select('id, full_name, contact_number, role, created_at').eq('id', id).maybeSingle()
   if (error) throw error
+  if (!data) throw new Error('Profile not found')
   return data
 }
 
@@ -18,8 +19,9 @@ async function getCustomerProfiles() {
 }
 
 async function updateProfile(id, updates) {
-  const { data, error } = await supabase.from('profiles').update(updates).eq('id', id).select('id, full_name, contact_number, role').single()
+  const { data, error } = await supabase.from('profiles').update(updates).eq('id', id).select('id, full_name, contact_number, role, created_at').maybeSingle()
   if (error) throw error
+  if (!data) throw new Error('Profile not found')
   return data
 }
 

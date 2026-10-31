@@ -190,15 +190,15 @@ function AdminProducts() {
     <section>
       <header className="mb-7 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold">Products</h1>
-          <p className="mt-1 text-sm text-[#9A8061]">
+          <h1 className="display text-[2rem]">Products</h1>
+          <p className="mt-1 text-sm text-[#776F65]">
             Manage menu items, prices and availability
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={() => { fetchProducts().catch(() => {}); fetchCategories().catch(() => {}) }} disabled={loading} className="rounded-lg border border-[#D8BD8F] bg-white px-4 py-2 text-sm font-bold text-[#756957] hover:text-[#241A12] disabled:opacity-50">{loading ? 'Refreshing…' : 'Refresh'}</button>
-          <button type="button" onClick={openAddForm} className="rounded-lg bg-[#2B211A] px-4 py-2 text-sm font-bold text-white hover:bg-[#44362B]">+ Add product</button>
+          <button type="button" onClick={() => { fetchProducts().catch(() => {}); fetchCategories().catch(() => {}) }} disabled={loading} className="rounded-lg border border-[#D3C9BB] bg-[#FFFDF9] px-4 py-2 text-sm font-bold text-[#776F65] hover:text-[#211E1A] disabled:opacity-50">{loading ? 'Refreshing…' : 'Refresh'}</button>
+          <button type="button" onClick={openAddForm} className="rounded-lg bg-[#211E1A] px-4 py-2 text-sm font-bold text-white hover:bg-[#3A352E]">+ Add product</button>
         </div>
       </header>
 
@@ -209,15 +209,15 @@ function AdminProducts() {
       )}
 
       <div className="mb-4 flex flex-wrap gap-3">
-        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" aria-label="Search products" className="w-full max-w-sm rounded-xl border border-[#E6DCCF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#E8531D]" />
-        <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} aria-label="Filter products by category" className="rounded-xl border border-[#E6DCCF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#E8531D]"><option value="all">All categories</option>{categories.map((category) => <option key={category.id} value={String(category.id)}>{category.name}</option>)}</select>
-        <span className="self-center text-sm text-[#8A7A61]">{visibleProducts.length} {visibleProducts.length === 1 ? 'product' : 'products'}</span>
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" aria-label="Search products" className="w-full max-w-sm rounded-xl border border-[#E2DBD0] bg-[#FFFDF9] px-4 py-2.5 text-sm outline-none focus:border-[#B25F6C]" />
+        <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} aria-label="Filter products by category" className="rounded-xl border border-[#E2DBD0] bg-[#FFFDF9] px-4 py-2.5 text-sm outline-none focus:border-[#B25F6C]"><option value="all">All categories</option>{categories.map((category) => <option key={category.id} value={String(category.id)}>{category.name}</option>)}</select>
+        <span className="self-center text-sm text-[#776F65]">{visibleProducts.length} {visibleProducts.length === 1 ? 'product' : 'products'}</span>
       </div>
 
-      <section className="overflow-hidden rounded-2xl border border-[#EAD8B9] bg-white">
+      <section className="overflow-hidden rounded-[1.1rem] border border-[#E2DBD0] bg-[#FFFDF9]">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-            <thead className="bg-[#F2ECDD] text-[#927859]">
+            <thead className="bg-[#F1ECE4] text-[#776F65]">
               <tr>
                 <th className="px-4 py-4 font-medium">Product</th>
                 <th className="px-4 py-4 font-medium">Category</th>
@@ -229,7 +229,7 @@ function AdminProducts() {
 
             <tbody>
               {visibleProducts.map((product) => (
-                <tr key={product.id} className="border-t border-[#EAD8B9]">
+                <tr key={product.id} className="border-t border-[#E2DBD0]">
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-3">
                       {product.image_url ? (
@@ -241,7 +241,7 @@ function AdminProducts() {
                           className="h-11 w-11 rounded-xl object-cover"
                         />
                       ) : (
-                        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F5E2BD] text-xl">
+                        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#EFE6D7] text-xl">
                           🍽️
                         </span>
                       )}
@@ -262,8 +262,8 @@ function AdminProducts() {
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-bold ${
                         product.is_available
-                          ? 'bg-[#E0EEE5] text-[#315D4D]'
-                          : 'bg-[#EEE9D9] text-[#8D7655]'
+                          ? 'bg-[#E8EDE7] text-[#2F3B33]'
+                          : 'bg-[#F1ECE4] text-[#948B7F]'
                       }`}
                     >
                       {product.is_available ? 'Visible' : 'Unavailable'}
@@ -276,7 +276,7 @@ function AdminProducts() {
                           type="button"
                           disabled={loading}
                         onClick={() => openEditForm(product)}
-                        className="rounded-lg border border-[#2B211A] px-3 py-1.5 text-xs font-bold hover:bg-[#F8F0DD]"
+                        className="rounded-lg border border-[#211E1A] px-3 py-1.5 text-xs font-bold hover:bg-[#F1ECE4]"
                       >
                         Edit
                       </button>
@@ -298,7 +298,7 @@ function AdminProducts() {
                 <tr>
                   <td
                     colSpan="5"
-                    className="px-4 py-8 text-center text-[#9A8061]"
+                    className="px-4 py-8 text-center text-[#776F65]"
                   >
                     {products.length === 0 ? 'No products found.' : 'No products match these filters.'}
                   </td>
@@ -309,7 +309,7 @@ function AdminProducts() {
         </div>
 
         {loading && (
-          <p className="border-t border-[#EAD8B9] px-4 py-3 text-sm text-[#9A8061]">
+          <p className="border-t border-[#E2DBD0] px-4 py-3 text-sm text-[#776F65]">
             Loading products…
           </p>
         )}
@@ -319,17 +319,17 @@ function AdminProducts() {
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 p-4">
           <form
             onSubmit={handleSubmit}
-            className="my-auto w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
+            className="my-auto w-full max-w-lg rounded-[1.1rem] bg-[#FFFDF9] p-6 shadow-xl"
           >
             <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-xl font-extrabold">
+              <h2 className="text-xl font-semibold">
                 {editingId ? 'Edit product' : 'Add product'}
               </h2>
 
               <button
                 type="button"
                 onClick={closeForm}
-                className="rounded-lg px-3 py-1 text-xl text-[#8A7A61] hover:bg-[#F8F0DD]"
+                className="rounded-lg px-3 py-1 text-xl text-[#776F65] hover:bg-[#F1ECE4]"
                 aria-label="Close form"
               >
                 ×
@@ -344,7 +344,7 @@ function AdminProducts() {
                   value={form.name}
                   onChange={handleChange}
                   required
-                  className="mt-1 w-full rounded-xl border border-[#E6DCCF] px-4 py-3 outline-none focus:border-[#E8531D]"
+                  className="mt-1 w-full rounded-xl border border-[#E2DBD0] px-4 py-3 outline-none focus:border-[#B25F6C]"
                 />
               </label>
 
@@ -355,7 +355,7 @@ function AdminProducts() {
                   value={form.description}
                   onChange={handleChange}
                   rows="3"
-                  className="mt-1 w-full rounded-xl border border-[#E6DCCF] px-4 py-3 outline-none focus:border-[#E8531D]"
+                  className="mt-1 w-full rounded-xl border border-[#E2DBD0] px-4 py-3 outline-none focus:border-[#B25F6C]"
                 />
               </label>
 
@@ -369,7 +369,7 @@ function AdminProducts() {
                   value={form.price}
                   onChange={handleChange}
                   required
-                  className="mt-1 w-full rounded-xl border border-[#E6DCCF] px-4 py-3 outline-none focus:border-[#E8531D]"
+                  className="mt-1 w-full rounded-xl border border-[#E2DBD0] px-4 py-3 outline-none focus:border-[#B25F6C]"
                 />
               </label>
 
@@ -379,7 +379,7 @@ function AdminProducts() {
                   name="category_id"
                   value={form.category_id}
                   onChange={handleChange}
-                  className="mt-1 w-full rounded-xl border border-[#E6DCCF] bg-white px-4 py-3 outline-none focus:border-[#E8531D]"
+                  className="mt-1 w-full rounded-xl border border-[#E2DBD0] bg-[#FFFDF9] px-4 py-3 outline-none focus:border-[#B25F6C]"
                 >
                   <option value="">Choose a category</option>
                   {categories.map((category) => (
@@ -392,9 +392,9 @@ function AdminProducts() {
 
               <div>
                 <label className="block text-sm font-semibold" htmlFor="product-image">Product image</label>
-                <input id="product-image" type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} className="mt-2 block w-full cursor-pointer rounded-xl border border-[#E6DCCF] bg-white text-sm file:mr-4 file:cursor-pointer file:border-0 file:bg-[#F5E2BD] file:px-4 file:py-3 file:font-bold file:text-[#241A12] hover:file:bg-[#EED5A9]" />
-                <p className="mt-1 text-xs text-[#8A7A61]">JPG, PNG, or WebP · up to 5 MB · securely uploaded by the server</p>
-                {(previewUrl || form.image_url) && <img src={previewUrl || form.image_url} alt="Product preview" className="mt-3 h-36 w-full rounded-xl border border-[#EAD9BC] object-cover" />}
+                <input id="product-image" type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} className="mt-2 block w-full cursor-pointer rounded-xl border border-[#E2DBD0] bg-[#FFFDF9] text-sm file:mr-4 file:cursor-pointer file:border-0 file:bg-[#EFE6D7] file:px-4 file:py-3 file:font-bold file:text-[#211E1A] hover:file:bg-[#E5D8C4]" />
+                <p className="mt-1 text-xs text-[#776F65]">JPG, PNG, or WebP · up to 5 MB · securely uploaded by the server</p>
+                {(previewUrl || form.image_url) && <img src={previewUrl || form.image_url} alt="Product preview" className="mt-3 h-36 w-full rounded-xl border border-[#E2DBD0] object-cover" />}
               </div>
 
               <label className="flex items-center gap-3 text-sm font-semibold">
@@ -403,7 +403,7 @@ function AdminProducts() {
                   type="checkbox"
                   checked={form.is_available}
                   onChange={handleChange}
-                  className="h-4 w-4 accent-[#E8531D]"
+                  className="h-4 w-4 accent-[#B25F6C]"
                 />
                 Product is available
               </label>
@@ -415,7 +415,7 @@ function AdminProducts() {
               <button
                 type="button"
                 onClick={closeForm}
-                className="rounded-lg border border-[#D9C9AF] px-4 py-2 text-sm font-bold"
+                className="rounded-lg border border-[#D3C9BB] px-4 py-2 text-sm font-bold"
               >
                 Cancel
               </button>
@@ -423,7 +423,7 @@ function AdminProducts() {
               <button
                 type="submit"
                 disabled={productsLoading || isSaving}
-                className="rounded-lg bg-[#E8531D] px-4 py-2 text-sm font-bold text-white hover:bg-[#C94316] disabled:opacity-60"
+                className="rounded-lg bg-[#B25F6C] px-4 py-2 text-sm font-bold text-white hover:bg-[#8E4653] disabled:opacity-60"
               >
                 {productsLoading || isSaving
                   ? imageFile ? 'Uploading image…' : 'Saving…'

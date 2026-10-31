@@ -1,8 +1,8 @@
-# ErnestEats
-Web-based online ordering system with inventory and sales management for **Ernest Kitchen and Streetfood**.
+# Pika-Chill
+Web-based online ordering system with inventory and sales management for **Pika-Chill**.
 
 ## Project Overview
-ErnestEats allows customers to browse the menu, place orders, and track order status, while giving admins tools to manage products, orders, inventory, and sales — all through a centralized web platform.
+Pika-Chill allows customers to browse the menu, place orders, and track order status, while giving admins tools to manage products, orders, inventory, and sales — all through a centralized web platform.
 
 ## Tech Stack
 - **Frontend:** React.js, Tailwind CSS
@@ -18,7 +18,7 @@ ErnestEats allows customers to browse the menu, place orders, and track order st
 - In-app notifications via Supabase Realtime
 
 ## Project Structure
-ErnestEats/
+Pika-Chill/
 ├── frontend/ → React app
 ├── backend/ → Express API
 ├── database/ → ERD, schema docs, seed data (actual DB hosted on Supabase)

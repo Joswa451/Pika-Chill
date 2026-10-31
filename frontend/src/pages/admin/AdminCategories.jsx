@@ -95,15 +95,15 @@ function AdminCategories() {
     <section>
       <header className="mb-7 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold">Categories</h1>
-          <p className="mt-1 text-sm text-[#9A8061]">
+          <h1 className="display text-[2rem]">Categories</h1>
+          <p className="mt-1 text-sm text-[#776F65]">
             Group menu items for browsing
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={() => { fetchCategories().catch(() => {}); fetchProducts().catch(() => {}) }} disabled={loading} className="rounded-lg border border-[#D8BD8F] bg-white px-4 py-2 text-sm font-bold text-[#756957] hover:text-[#241A12] disabled:opacity-50">{loading ? 'Refreshing…' : 'Refresh'}</button>
-          <button type="button" onClick={openAddForm} className="rounded-lg bg-[#2B211A] px-4 py-2 text-sm font-bold text-white hover:bg-[#44362B]">+ Add category</button>
+          <button type="button" onClick={() => { fetchCategories().catch(() => {}); fetchProducts().catch(() => {}) }} disabled={loading} className="rounded-lg border border-[#D3C9BB] bg-[#FFFDF9] px-4 py-2 text-sm font-bold text-[#776F65] hover:text-[#211E1A] disabled:opacity-50">{loading ? 'Refreshing…' : 'Refresh'}</button>
+          <button type="button" onClick={openAddForm} className="rounded-lg bg-[#211E1A] px-4 py-2 text-sm font-bold text-white hover:bg-[#3A352E]">+ Add category</button>
         </div>
       </header>
 
@@ -114,14 +114,14 @@ function AdminCategories() {
       )}
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search categories" aria-label="Search categories" className="w-full max-w-sm rounded-xl border border-[#E6DCCF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#E8531D]" />
-        <span className="text-sm text-[#8A7A61]">{visibleCategories.length} {visibleCategories.length === 1 ? 'category' : 'categories'}</span>
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search categories" aria-label="Search categories" className="w-full max-w-sm rounded-xl border border-[#E2DBD0] bg-[#FFFDF9] px-4 py-2.5 text-sm outline-none focus:border-[#B25F6C]" />
+        <span className="text-sm text-[#776F65]">{visibleCategories.length} {visibleCategories.length === 1 ? 'category' : 'categories'}</span>
       </div>
 
-      <section className="overflow-hidden rounded-2xl border border-[#EAD8B9] bg-white">
+      <section className="overflow-hidden rounded-[1.1rem] border border-[#E2DBD0] bg-[#FFFDF9]">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[600px] border-collapse text-left text-sm">
-            <thead className="bg-[#F2ECDD] text-[#927859]">
+            <thead className="bg-[#F1ECE4] text-[#776F65]">
               <tr>
                 <th className="px-4 py-4 font-medium">Category</th>
                 <th className="px-4 py-4 font-medium">Products</th>
@@ -138,7 +138,7 @@ function AdminCategories() {
                 return (
                   <tr
                     key={category.id}
-                    className="border-t border-[#EAD8B9]"
+                    className="border-t border-[#E2DBD0]"
                   >
                     <td className="px-4 py-4">{category.name}</td>
                     <td className="px-4 py-4">
@@ -150,7 +150,7 @@ function AdminCategories() {
                         <button
                           type="button"
                           onClick={() => openEditForm(category)}
-                          className="rounded-lg border border-[#2B211A] px-3 py-1.5 text-xs font-bold hover:bg-[#F8F0DD]"
+                          className="rounded-lg border border-[#211E1A] px-3 py-1.5 text-xs font-bold hover:bg-[#F1ECE4]"
                         >
                           Edit
                         </button>
@@ -172,7 +172,7 @@ function AdminCategories() {
                 <tr>
                   <td
                     colSpan="3"
-                    className="px-4 py-8 text-center text-[#9A8061]"
+                    className="px-4 py-8 text-center text-[#776F65]"
                   >
                     {categories.length === 0 ? 'No categories found.' : 'No categories match this search.'}
                   </td>
@@ -183,7 +183,7 @@ function AdminCategories() {
         </div>
 
         {loading && (
-          <p className="border-t border-[#EAD8B9] px-4 py-3 text-sm text-[#9A8061]">
+          <p className="border-t border-[#E2DBD0] px-4 py-3 text-sm text-[#776F65]">
             Loading categories…
           </p>
         )}
@@ -193,9 +193,9 @@ function AdminCategories() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <form
             onSubmit={handleSubmit}
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+            className="w-full max-w-md rounded-[1.1rem] bg-[#FFFDF9] p-6 shadow-xl"
           >
-            <h2 className="mb-5 text-xl font-extrabold">
+            <h2 className="mb-5 text-xl font-semibold">
               {editingId ? 'Edit category' : 'Add category'}
             </h2>
 
@@ -206,8 +206,8 @@ function AdminCategories() {
                 onChange={(event) => setName(event.target.value)}
                 required
                 autoFocus
-                className="mt-2 w-full rounded-xl border border-[#E6DCCF] px-4 py-3 outline-none focus:border-[#E8531D]"
-                placeholder="For example, Streetfood"
+                className="mt-2 w-full rounded-xl border border-[#E2DBD0] px-4 py-3 outline-none focus:border-[#B25F6C]"
+                placeholder="For example, Rice meals"
               />
             </label>
 
@@ -215,7 +215,7 @@ function AdminCategories() {
               <button
                 type="button"
                 onClick={closeForm}
-                className="rounded-lg border border-[#D9C9AF] px-4 py-2 text-sm font-bold"
+                className="rounded-lg border border-[#D3C9BB] px-4 py-2 text-sm font-bold"
               >
                 Cancel
               </button>
@@ -223,7 +223,7 @@ function AdminCategories() {
               <button
                 type="submit"
                 disabled={categoriesLoading}
-                className="rounded-lg bg-[#E8531D] px-4 py-2 text-sm font-bold text-white hover:bg-[#C94316] disabled:opacity-60"
+                className="rounded-lg bg-[#B25F6C] px-4 py-2 text-sm font-bold text-white hover:bg-[#8E4653] disabled:opacity-60"
               >
                 {categoriesLoading
                   ? 'Saving…'

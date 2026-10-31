@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
-const CART_KEY = 'ernesteats_cart'
-const CART_EVENT = 'ernesteats-cart-updated'
+const CART_KEY = 'pikachill_cart'
+const CART_EVENT = 'pikachill-cart-updated'
 
 function readCart() {
   try {

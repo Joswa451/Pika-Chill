@@ -16,16 +16,39 @@ function ProductDetails() {
   const product = useMemo(() => products.find((item) => String(item.id) === id), [products, id])
   const category = categories.find((item) => String(item.id) === String(product?.category_id))?.name || 'Uncategorized'
 
-  if (loading && !products.length) return <main className="mx-auto min-h-[60vh] max-w-7xl px-5 py-12 text-[#8A7A61]">Loading product…</main>
-  if (error && !product) return <main className="mx-auto min-h-[60vh] max-w-7xl px-5 py-12"><h1 className="text-2xl font-extrabold">We couldn’t load this product.</h1><p role="alert" className="mt-3 text-sm text-red-700">{error}</p><button type="button" onClick={() => fetchProducts().catch(() => {})} className="mt-4 rounded-lg border border-[#EAD9BC] px-4 py-2 text-sm font-bold">Try again</button><Link to="/customer/menu" className="ml-4 inline-block text-[#B23F14]">Back to menu</Link></main>
-  if (!product) return <main className="mx-auto min-h-[60vh] max-w-7xl px-5 py-12"><h1 className="text-2xl font-extrabold">Product not found</h1><p className="mt-2 text-sm text-[#756957]">This product may have been removed from the menu.</p><Link to="/customer/menu" className="mt-4 inline-block text-[#B23F14]">Back to menu</Link></main>
+  if (loading && !products.length) return <main className="page-wrap min-h-[60vh] py-16 text-sm text-[#776F65]">Loading product…</main>
+  if (error && !product) return <main className="page-wrap min-h-[60vh] py-16"><h1 className="display text-3xl text-[#211E1A]">We couldn’t load this product.</h1><p role="alert" className="mt-3 text-sm text-[#9F3A32]">{error}</p><button type="button" onClick={() => fetchProducts().catch(() => {})} className="btn btn-outline btn-sm mt-5">Try again</button><Link to="/customer/menu" className="ml-4 inline-block text-sm font-semibold text-[#B25F6C]">Back to menu</Link></main>
+  if (!product) return <main className="page-wrap min-h-[60vh] py-16"><h1 className="display text-3xl text-[#211E1A]">Product not found</h1><p className="mt-2 text-sm text-[#776F65]">This product may have been removed from the menu.</p><Link to="/customer/menu" className="mt-5 inline-block text-sm font-semibold text-[#B25F6C]">Back to menu</Link></main>
 
   return (
-    <main className="mx-auto min-h-[60vh] max-w-7xl px-5 py-9 sm:px-8">
-      <Link to="/customer/menu" className="mb-6 inline-block text-sm font-bold text-[#8A4A24]">← Back to menu</Link>
-      <section className="grid overflow-hidden rounded-3xl border border-[#EAD9BC] bg-white md:grid-cols-2">
-        {product.image_url ? <img src={product.image_url} alt={product.name} className="h-72 w-full object-cover md:h-full" /> : <div className="flex min-h-72 items-end bg-[radial-gradient(ellipse_at_70%_30%,rgba(232,83,29,.12),transparent_45%),linear-gradient(145deg,#EAE2D6,#D5C8B5)] p-8"><span className="text-xs font-bold uppercase tracking-[.2em] text-[#604D39]">Ernest Kitchen · Freshly made</span></div>}
-        <div className="p-6 sm:p-10"><p className="text-sm font-bold text-[#8A7A61]">{category}</p><h1 className="mt-2 text-3xl font-extrabold">{product.name}</h1><p className="mt-5 leading-7 text-[#756957]">{product.description || 'Freshly prepared to order.'}</p><p className="mt-6 text-2xl font-extrabold text-[#B23F14]">{peso(product.price)}</p><div className="mt-7 rounded-xl bg-[#FBF1DE] p-4"><p className="font-bold">Pickup only · Pay at counter</p><p className="mt-1 text-sm text-[#756957]">We’ll prepare your order for pickup at Ernest Kitchen &amp; Streetfood.</p></div><div className="mt-6 flex items-center gap-4"><span className="text-sm font-semibold">Quantity</span><div className="flex items-center gap-3 rounded-lg border border-[#EAD9BC] p-1"><button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))} disabled={quantity <= 1 || !product.is_available} aria-label="Decrease quantity" className="h-9 w-9 rounded-md font-bold disabled:opacity-40">−</button><span aria-live="polite" className="min-w-6 text-center font-bold">{quantity}</span><button type="button" onClick={() => setQuantity((value) => value + 1)} disabled={!product.is_available} aria-label="Increase quantity" className="h-9 w-9 rounded-md font-bold disabled:opacity-40">+</button></div></div><button onClick={() => addItem(product, quantity)} disabled={!product.is_available} className="mt-4 w-full rounded-xl bg-[#E8531D] px-6 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50">{product.is_available ? `Add ${quantity} to cart · ${peso(Number(product.price) * quantity)}` : 'Currently unavailable'}</button></div>
+    <main className="page-wrap min-h-[60vh] py-10 sm:py-14">
+      <Link to="/customer/menu" className="mb-7 inline-flex items-center gap-2 text-[0.78rem] font-semibold text-[#776F65] transition hover:text-[#211E1A]"><span aria-hidden="true">←</span> Back to menu</Link>
+      <section className="grid overflow-hidden rounded-[1.6rem] border border-[#E2DBD0] bg-[#FFFDF9] md:grid-cols-2">
+        {product.image_url ? <img src={product.image_url} alt={product.name} className="h-80 w-full object-cover md:h-full" /> : <div className="flex min-h-80 items-end bg-[linear-gradient(145deg,#EDE8DF,#D8D0C3)] p-8"><span className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-[#776F65]">Pika-Chill · Freshly made</span></div>}
+        <div className="flex flex-col justify-center p-6 sm:p-10 lg:p-14">
+          <p className="eyebrow">{category}</p>
+          <h1 className="display mt-3 text-[2.5rem] leading-tight text-[#211E1A] sm:text-[3rem]">{product.name}</h1>
+          <p className="mt-5 text-[0.95rem] leading-7 text-[#776F65]">{product.description || 'Freshly prepared to order.'}</p>
+          <p className="mt-6 text-2xl font-semibold text-[#211E1A]">{peso(product.price)}</p>
+
+          <div className="mt-7 rounded-2xl border border-[#E2DBD0] bg-[#F1ECE4] p-5">
+            <p className="text-sm font-semibold text-[#211E1A]">In-store pickup & takeout · Pay at counter</p>
+            <p className="mt-1 text-[0.8rem] leading-5 text-[#776F65]">We’ll prepare your order for pickup at Pika-Chill.</p>
+          </div>
+
+          <div className="mt-7 flex items-center gap-4">
+            <span className="text-sm font-medium text-[#211E1A]">Quantity</span>
+            <div className="flex items-center gap-1 rounded-full border border-[#E2DBD0] bg-[#FFFDF9] p-1">
+              <button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))} disabled={quantity <= 1 || !product.is_available} aria-label="Decrease quantity" className="h-9 w-9 rounded-full text-lg font-medium transition hover:bg-[#F1ECE4] disabled:opacity-40">−</button>
+              <span aria-live="polite" className="min-w-7 text-center text-sm font-semibold">{quantity}</span>
+              <button type="button" onClick={() => setQuantity((value) => value + 1)} disabled={!product.is_available} aria-label="Increase quantity" className="h-9 w-9 rounded-full text-lg font-medium transition hover:bg-[#F1ECE4] disabled:opacity-40">+</button>
+            </div>
+          </div>
+
+          <button onClick={() => addItem(product, quantity)} disabled={!product.is_available} className="btn btn-primary mt-5 w-full py-3.5">
+            {product.is_available ? `Add ${quantity} to cart · ${peso(Number(product.price) * quantity)}` : 'Currently unavailable'}
+          </button>
+        </div>
       </section>
     </main>
   )

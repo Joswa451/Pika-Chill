@@ -10,7 +10,7 @@ async function requireAdmin(req, res, next) {
       .from('profiles')
       .select('role')
       .eq('id', req.user.id)
-      .single()
+      .maybeSingle()
 
     if (error || !profile) {
       return res.status(403).json({ error: 'Profile not found' })

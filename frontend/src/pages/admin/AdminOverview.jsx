@@ -30,18 +30,18 @@ function getStatusStyle(status) {
   const normalizedStatus = String(status || '').toLowerCase()
 
   if (normalizedStatus === 'preparing') {
-    return 'bg-[#FFEDD5] text-[#A65E0C]'
+    return 'bg-[#F5EADF] text-[#8A5A2B]'
   }
 
   if (normalizedStatus === 'ready') {
-    return 'bg-[#E0EEE5] text-[#315D4D]'
+    return 'bg-[#E8EDE7] text-[#2F3B33]'
   }
 
   if (normalizedStatus === 'completed') {
-    return 'bg-[#E0EEE5] text-[#315D4D]'
+    return 'bg-[#E8EDE7] text-[#2F3B33]'
   }
 
-  return 'bg-[#EEE9D9] text-[#8D7655]'
+  return 'bg-[#F1ECE4] text-[#948B7F]'
 }
 
 function AdminOverview() {
@@ -150,15 +150,15 @@ function AdminOverview() {
     <>
       <header className="mb-7 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold">Overview</h1>
-          <p className="mt-1 text-sm text-[#9A8061]">
+          <h1 className="display text-[2rem]">Overview</h1>
+          <p className="mt-1 text-sm text-[#776F65]">
             Today&apos;s snapshot · {todayLabel}
           </p>
         </div>
 
         <div className="flex gap-2">
-          <button type="button" onClick={refreshOverview} disabled={loading} className="rounded-lg border border-[#D8BD8F] bg-white px-4 py-2 text-sm font-bold text-[#756957] hover:text-[#241A12] disabled:opacity-50">{loading ? 'Refreshing…' : 'Refresh'}</button>
-          <button type="button" onClick={() => navigate('/admin/reports')} className="rounded-lg bg-[#2B211A] px-4 py-2 text-sm font-bold text-white hover:bg-[#44362B]">View sales report</button>
+          <button type="button" onClick={refreshOverview} disabled={loading} className="rounded-lg border border-[#D3C9BB] bg-[#FFFDF9] px-4 py-2 text-sm font-bold text-[#776F65] hover:text-[#211E1A] disabled:opacity-50">{loading ? 'Refreshing…' : 'Refresh'}</button>
+          <button type="button" onClick={() => navigate('/admin/reports')} className="rounded-lg bg-[#211E1A] px-4 py-2 text-sm font-bold text-white hover:bg-[#3A352E]">View sales report</button>
         </div>
       </header>
 
@@ -169,39 +169,39 @@ function AdminOverview() {
       )}
 
       <section className="mb-7 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <article className="rounded-2xl border border-[#EAD8B9] bg-white p-5">
-          <p className="text-sm text-[#927859]">Orders today</p>
-          <strong className="mt-2 block text-3xl font-extrabold">
+        <article className="rounded-[1.1rem] border border-[#E2DBD0] bg-[#FFFDF9] p-5">
+          <p className="text-sm text-[#776F65]">Orders today</p>
+          <strong className="mt-2 block stat-value">
             {loading ? '…' : ordersToday.length}
           </strong>
         </article>
 
-        <article className="rounded-2xl border border-[#EAD8B9] bg-white p-5">
-          <p className="text-sm text-[#927859]">Revenue today</p>
-          <strong className="mt-2 block text-3xl font-extrabold">
+        <article className="rounded-[1.1rem] border border-[#E2DBD0] bg-[#FFFDF9] p-5">
+          <p className="text-sm text-[#776F65]">Revenue today</p>
+          <strong className="mt-2 block stat-value">
             {loading ? '…' : formatPeso(revenueTodayInCents / 100)}
           </strong>
         </article>
 
-        <article className="rounded-2xl border border-[#EAD8B9] bg-white p-5">
-          <p className="text-sm text-[#927859]">Pending orders</p>
-          <strong className="mt-2 block text-3xl font-extrabold">
+        <article className="rounded-[1.1rem] border border-[#E2DBD0] bg-[#FFFDF9] p-5">
+          <p className="text-sm text-[#776F65]">Pending orders</p>
+          <strong className="mt-2 block stat-value">
             {loading ? '…' : pendingOrders.length}
           </strong>
         </article>
 
-        <article className="rounded-2xl border border-[#EAD8B9] bg-white p-5">
-          <p className="text-sm text-[#927859]">Low-stock items</p>
-          <strong className="mt-2 block text-3xl font-extrabold">
+        <article className="rounded-[1.1rem] border border-[#E2DBD0] bg-[#FFFDF9] p-5">
+          <p className="text-sm text-[#776F65]">Low-stock items</p>
+          <strong className="mt-2 block stat-value">
             {loading ? '…' : lowStockItems.length}
           </strong>
         </article>
       </section>
 
-      <section className="overflow-hidden rounded-2xl border border-[#EAD8B9] bg-white">
+      <section className="overflow-hidden rounded-[1.1rem] border border-[#E2DBD0] bg-[#FFFDF9]">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[650px] border-collapse text-left text-sm">
-            <thead className="bg-[#F2ECDD] text-[#927859]">
+            <thead className="bg-[#F1ECE4] text-[#776F65]">
               <tr>
                 <th className="px-4 py-4 font-medium">Order</th>
                 <th className="px-4 py-4 font-medium">Customer</th>
@@ -219,7 +219,7 @@ function AdminOverview() {
                 )
 
                 return (
-                  <tr key={order.id} className="border-t border-[#EAD8B9]">
+                  <tr key={order.id} className="border-t border-[#E2DBD0]">
                     <td className="px-4 py-4">
                       #{String(order.id).slice(0, 8)}
                     </td>
@@ -250,7 +250,7 @@ function AdminOverview() {
                 <tr>
                   <td
                     colSpan="5"
-                    className="px-4 py-8 text-center text-[#9A8061]"
+                    className="px-4 py-8 text-center text-[#776F65]"
                   >
                     No orders to show yet.
                   </td>
