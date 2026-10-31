@@ -69,7 +69,6 @@ function AuthPage() {
         <div className="mb-8 flex flex-col items-center text-center">
           <img src="/logo/new-logo.jpg" alt="Pika-Chill" className="h-20 w-20 rounded-full border border-[#E2DBD0] object-cover shadow-sm" />
           <h1 className="display mt-5 text-[2.4rem] leading-none text-[#211E1A]">Pika-Chill</h1>
-          <p className="mt-2 text-[0.6rem] font-semibold uppercase tracking-[0.28em] text-[#B25F6C]">Reservations · Delivery · Takeout</p>
         </div>
 
         <div className="rounded-[1.4rem] border border-[#E2DBD0] bg-[#FFFDF9] p-6 shadow-[0_24px_60px_rgba(33,30,26,.08)] sm:p-8">
@@ -196,8 +195,6 @@ function AuthPage() {
             )}
           </p>
         </div>
-
-        <p className="mt-6 text-center text-[0.68rem] text-[#948B7F]">Reservations · In-store pickup · Delivery · Outdoor seating · Takeout</p>
       </main>
     </div>
   )

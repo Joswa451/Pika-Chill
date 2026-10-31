@@ -1,7 +1,5 @@
 
-const API_URL = (
-  import.meta.env.VITE_API_URL || 'https://pika-chill.onrender.com'
-).replace(/\/$/, '');
+import { API_URL } from '../../lib/apiBase';
 
 export async function registerRequest({
   email,
@@ -9,7 +7,7 @@ export async function registerRequest({
   fullName,
   contactNumber
 }) {
-  const res = await fetch(`${API_URL}/api/auth/register`, {
+  const res = await fetch(`${API_URL}/auth/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -32,7 +30,7 @@ export async function registerRequest({
 }
 
 export async function loginRequest({ email, password }) {
-  const res = await fetch(`${API_URL}/api/auth/login`, {
+  const res = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
