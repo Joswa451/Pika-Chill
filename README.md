@@ -1,4 +1,6 @@
 # Pika-Chill
+pika chill store
+
 Web-based online ordering system with inventory and sales management for **Pika-Chill**.
 
 ## Project Overview
@@ -47,4 +49,4 @@ npx nodemon src/server.js
 Create `.env` files in both `frontend/` and `backend/` — see `.env.example` in each folder for required keys. **Never commit `.env` files.**
 
 ## Status
-In Development 
+In Development
