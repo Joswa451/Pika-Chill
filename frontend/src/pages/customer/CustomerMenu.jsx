@@ -179,7 +179,7 @@ function CustomerMenu() {
                         disabled={soldOut || remaining <= 0}
                         className="rounded-full border border-[#D3C9BB] px-3.5 py-1.5 text-[0.7rem] font-semibold text-[#211E1A] transition hover:border-[#211E1A] hover:bg-[#211E1A] hover:text-[#FFFDF9] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[#D3C9BB] disabled:hover:bg-transparent disabled:hover:text-[#211E1A]"
                       >
-                        {soldOut ? 'Out of stock' : remaining <= 0 ? 'Max in cart' : 'Add to cart'}
+                        {soldOut ? 'Out of stock' : remaining <= 0 ? 'Max in order' : 'Add to order'}
                       </button>
                     </div>
                   </div>

@@ -51,7 +51,7 @@ function ProductDetails() {
           </div>
 
           <button onClick={() => addItem(product, selectedQuantity)} disabled={soldOut || remaining <= 0} className="btn btn-primary mt-5 w-full py-3.5">
-            {soldOut ? 'Out of stock' : remaining <= 0 ? 'All available stock is in your cart' : `Add ${selectedQuantity} to cart · ${peso(Number(product.price) * selectedQuantity)}`}
+            {soldOut ? 'Out of stock' : remaining <= 0 ? 'All available stock is in your order' : `Add ${selectedQuantity} to order · ${peso(Number(product.price) * selectedQuantity)}`}
           </button>
         </div>
       </section>

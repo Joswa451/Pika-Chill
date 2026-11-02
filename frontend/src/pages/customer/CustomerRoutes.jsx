@@ -17,8 +17,8 @@ function CustomerRoutes() {
         <Route index element={<CustomerHome />} />
         <Route path="menu" element={<CustomerMenu />} />
         <Route path="products/:id" element={<ProductDetails />} />
-        <Route path="cart" element={<Cart />} />
-        <Route path="checkout" element={<Checkout />} />
+        <Route path="order" element={<Cart />} />
+        <Route path="place-order" element={<Checkout />} />
         <Route path="orders" element={<MyOrders />} />
         <Route path="notifications" element={<CustomerNotifications />} />
         <Route path="profile" element={<CustomerProfile />} />

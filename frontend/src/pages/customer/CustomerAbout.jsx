@@ -17,7 +17,7 @@ function CustomerAbout() {
 
         <div className="grid gap-px border-t border-[#E2DBD0] bg-[#E2DBD0] sm:grid-cols-2 lg:grid-cols-4">
           {[
-            ['How ordering works', 'Browse the menu, add favorites to your cart, then place an order. We prepare it after confirmation; pay in cash at the counter.'],
+            ['How ordering works', 'Browse the menu, add favorites to your order, then check out. We prepare it after confirmation; pay in cash at the counter.'],
             ['Services', 'Reservations · In-store pickup · Delivery · Outdoor seating · Takeout'],
             ['Store hours', '10:00 AM – 9:00 PM daily.'],
             ['Get in touch', '0917 000 0000 · hello@pikachill.app']

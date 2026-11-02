@@ -177,7 +177,7 @@ function CustomerHome() {
                     <button type="button" onClick={() => navigate(`/customer/products/${product.id}`)} className="display block text-left text-lg leading-snug text-[#211E1A] transition hover:text-[#B25F6C]">{product.name}</button>
                     <div className="mt-4 flex items-center justify-between gap-3">
                       <span className="text-sm font-semibold text-[#211E1A]">{formatPeso(product.price)}</span>
-                      <button type="button" onClick={() => addItem(product)} disabled={soldOut || remaining <= 0} className="rounded-full border border-[#D3C9BB] px-3.5 py-1.5 text-[0.7rem] font-semibold text-[#211E1A] transition hover:border-[#211E1A] hover:bg-[#211E1A] hover:text-[#FFFDF9] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[#D3C9BB] disabled:hover:bg-transparent disabled:hover:text-[#211E1A]">{soldOut ? 'Out of stock' : remaining <= 0 ? 'Max in cart' : 'Add to cart'}</button>
+                      <button type="button" onClick={() => addItem(product)} disabled={soldOut || remaining <= 0} className="rounded-full border border-[#D3C9BB] px-3.5 py-1.5 text-[0.7rem] font-semibold text-[#211E1A] transition hover:border-[#211E1A] hover:bg-[#211E1A] hover:text-[#FFFDF9] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[#D3C9BB] disabled:hover:bg-transparent disabled:hover:text-[#211E1A]">{soldOut ? 'Out of stock' : remaining <= 0 ? 'Max in order' : 'Add to order'}</button>
                     </div>
                   </div>
                 </article>

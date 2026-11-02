@@ -88,12 +88,12 @@ function Checkout() {
 
   return (
     <main className="page-wrap min-h-[60vh] py-10 sm:py-14">
-      <button onClick={() => navigate('/customer/cart')} className="mb-6 text-[0.78rem] font-semibold text-[#776F65] transition hover:text-[#211E1A]">← Back to cart</button>
+      <button onClick={() => navigate('/customer/order')} className="mb-6 text-[0.78rem] font-semibold text-[#776F65] transition hover:text-[#211E1A]">← Back to order</button>
       <p className="eyebrow">Final step</p>
-      <h1 className="display mt-3 text-[2.6rem] text-[#211E1A]">Checkout</h1>
+      <h1 className="display mt-3 text-[2.6rem] text-[#211E1A]">Place order</h1>
       <p className="mt-3 text-sm text-[#776F65]">Choose pickup, dine-in, or outdoor seating.</p>
 
-      {!cart.length ? <section className="card mt-7 p-8"><p className="font-medium">Your cart is empty.</p><Link className="mt-4 inline-block text-sm font-semibold text-[#B25F6C]" to="/customer/menu">Browse menu</Link></section> : (
+      {!cart.length ? <section className="card mt-7 p-8"><p className="font-medium">Your order is empty.</p><Link className="mt-4 inline-block text-sm font-semibold text-[#B25F6C]" to="/customer/menu">Browse menu</Link></section> : (
         <form onSubmit={handleSubmit} className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
           <div className="space-y-5">
             <section className="card p-6">

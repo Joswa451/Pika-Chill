@@ -31,12 +31,12 @@ function Cart() {
   return (
     <main className="page-wrap min-h-[60vh] py-10 sm:py-14">
       <p className="eyebrow">Pickup order</p>
-      <h1 className="display mt-3 text-[2.6rem] text-[#211E1A]">Your cart</h1>
-      <p className="mt-3 text-sm text-[#776F65]">Review your items before checkout.</p>
+      <h1 className="display mt-3 text-[2.6rem] text-[#211E1A]">Your order</h1>
+      <p className="mt-3 text-sm text-[#776F65]">Review your items before placing your order.</p>
 
       {!cart.length ? (
         <section className="card mt-8 p-12 text-center">
-          <p className="display text-2xl text-[#211E1A]">Your cart is empty.</p>
+          <p className="display text-2xl text-[#211E1A]">Your order is empty.</p>
           <p className="mt-2 text-sm text-[#776F65]">Choose some items from the menu first.</p>
           <Link to="/customer/menu" className="btn btn-primary btn-sm mt-6">Browse menu</Link>
         </section>
@@ -74,8 +74,8 @@ function Cart() {
             <div className="mt-5 flex justify-between text-sm text-[#776F65]"><span>Items</span><span>{cart.reduce((n, item) => n + Number(item.quantity), 0)}</span></div>
             <div className="mt-4 flex justify-between border-t border-[#E2DBD0] pt-4 text-base font-semibold text-[#211E1A]"><span>Total</span><span>{peso(total)}</span></div>
             <p className="mt-5 rounded-xl border border-[#E2DBD0] bg-[#F1ECE4] p-3.5 text-[0.72rem] leading-5 text-[#776F65]">In-store pickup or takeout. Pay at the counter when you collect your order.</p>
-            {hasStockIssue && <p role="alert" className="mt-3 rounded-xl border border-[#E6C3BE] bg-[#F8E9E6] p-3.5 text-[0.72rem] leading-5 text-[#9F3A32]">Some items are out of stock or exceed the available quantity. Adjust your cart before checking out.</p>}
-            <button onClick={() => navigate('/customer/checkout')} disabled={hasStockIssue} className="btn btn-primary mt-5 w-full py-3 disabled:cursor-not-allowed disabled:opacity-50">Continue to checkout</button>
+            {hasStockIssue && <p role="alert" className="mt-3 rounded-xl border border-[#E6C3BE] bg-[#F8E9E6] p-3.5 text-[0.72rem] leading-5 text-[#9F3A32]">Some items are out of stock or exceed the available quantity. Adjust your order before placing it.</p>}
+            <button onClick={() => navigate('/customer/place-order')} disabled={hasStockIssue} className="btn btn-primary mt-5 w-full py-3 disabled:cursor-not-allowed disabled:opacity-50">Continue to place order</button>
             <Link to="/customer/menu" className="mt-3 block text-center text-[0.78rem] font-semibold text-[#B25F6C] hover:underline">Continue shopping</Link>
           </aside>
         </div>

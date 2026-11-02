@@ -54,9 +54,9 @@ function CustomerNavbar({ cartCount = 0, cartTotal = 0, unreadCount = 0, profile
             {unreadCount > 0 && <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#B25F6C] ring-2 ring-[#FFFDF9]" />}
           </Link>
 
-          <Link to="/customer/cart" aria-label={`Cart with ${cartCount} ${cartCount === 1 ? 'item' : 'items'}, total ₱${Number(cartTotal).toLocaleString('en-PH', { maximumFractionDigits: 2 })}`} className="btn btn-primary btn-sm px-3 sm:px-4">
+          <Link to="/customer/order" aria-label={`Order with ${cartCount} ${cartCount === 1 ? 'item' : 'items'}, total ₱${Number(cartTotal).toLocaleString('en-PH', { maximumFractionDigits: 2 })}`} className="btn btn-primary btn-sm px-3 sm:px-4">
             <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6"><path strokeLinecap="round" strokeLinejoin="round" d="M6 6h15l-1.5 9h-12zM6 6 5 3H2m4 18a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm11 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" /></svg>
-            <span className="hidden sm:inline">Cart</span>
+            <span className="hidden sm:inline">Order</span>
             <span className="hidden text-[#C6A15B] sm:inline">₱{Number(cartTotal).toLocaleString('en-PH', { maximumFractionDigits: 2 })}</span>
             {cartCount > 0 && <span className="rounded-full bg-white/15 px-1.5 py-0.5 text-[0.65rem]">{cartCount}</span>}
           </Link>
