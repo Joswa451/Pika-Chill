@@ -145,8 +145,29 @@ async function refreshUserSession(refreshToken) {
   };
 }
 
+async function updateAccountCredentials(userId, { email, currentPassword, newEmail, newPassword }) {
+  if (!email || !currentPassword) throw new Error('Email and current password are required')
+  if (!newEmail && !newPassword) throw new Error('Provide a new email or password')
+
+  const authClient = createAuthClient()
+  const { data: signInData, error: signInError } = await authClient.auth.signInWithPassword({
+    email: email.trim().toLowerCase(),
+    password: currentPassword
+  })
+  if (signInError) throw new Error('Current password is incorrect')
+  if (signInData.user?.id !== userId) throw new Error('Credentials do not match the signed-in account')
+
+  const updates = {}
+  if (newEmail) updates.email = newEmail.trim().toLowerCase()
+  if (newPassword) updates.password = newPassword
+  const { data, error } = await authClient.auth.updateUser(updates)
+  if (error) throw new Error(error.message)
+  return data.user
+}
+
 module.exports = {
   registerUser,
   loginUser,
-  refreshUserSession
+  refreshUserSession,
+  updateAccountCredentials
 };

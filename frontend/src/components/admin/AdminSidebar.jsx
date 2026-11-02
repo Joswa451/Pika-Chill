@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
 function SidebarIcon({ children }) {
@@ -103,44 +104,84 @@ const sections = [
         <rect x="17" y="5" width="3" height="13" rx="1" />
       </SidebarIcon>
     )
+  },
+  {
+    label: 'Account settings',
+    to: '/admin/account',
+    icon: (
+      <SidebarIcon>
+        <circle cx="12" cy="12" r="3" />
+        <path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.8 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.8-1l-1.7.7-1.4-2.4L7.1 15a8 8 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.8-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.8 1l1.7-.7 1.4 2.4-1.4 1.1a8 8 0 0 1-.1 2Z" />
+      </SidebarIcon>
+    )
   }
 ]
 
 function AdminSidebar({ onLogout }) {
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (!menuOpen) return undefined
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [menuOpen])
+
   return (
-    <aside className="admin-sidebar flex w-full shrink-0 flex-col border-b border-[#3A352E] bg-[#211E1A] text-white lg:sticky lg:top-0 lg:h-screen lg:w-[264px] lg:border-b-0 lg:border-r">
-      <NavLink to="/admin" end className="flex h-[88px] shrink-0 items-center gap-3 border-b border-white/10 px-6">
-        <img src="/logo/new-logo.jpg" alt="Pika-Chill" className="h-10 w-10 rounded-full border border-white/15 object-cover" />
-        <span className="leading-tight">
-          <span className="display block text-[1.05rem]">Pika-Chill</span>
-          <span className="block text-[0.55rem] font-semibold uppercase tracking-[0.22em] text-[#C6A15B]">Admin studio</span>
-        </span>
-      </NavLink>
+    <aside className="admin-sidebar sticky top-0 z-40 w-full shrink-0 border-b border-[#3A352E] bg-[#211E1A] text-white lg:sticky lg:top-0 lg:z-auto lg:flex lg:h-screen lg:w-[264px] lg:flex-col lg:border-b-0 lg:border-r">
+      <div className="flex h-[72px] items-center justify-between gap-3 border-b border-white/10 px-5 lg:h-[88px] lg:border-b-0 lg:px-6">
+        <NavLink to="/admin" end className="flex min-w-0 items-center gap-3">
+          <img src="/logo/new-logo.jpg" alt="Pika-Chill" className="h-10 w-10 shrink-0 rounded-full border border-white/15 object-cover" />
+          <span className="min-w-0 leading-tight">
+            <span className="display block truncate text-[1.05rem]">Pika-Chill</span>
+            <span className="block text-[0.55rem] font-semibold uppercase tracking-[0.22em] text-[#C6A15B]">Admin studio</span>
+          </span>
+        </NavLink>
 
-      <nav aria-label="Admin navigation" className="flex gap-1 overflow-x-auto p-2 lg:flex-1 lg:flex-col lg:gap-0.5 lg:overflow-y-auto lg:overflow-x-hidden lg:p-4">
-        {sections.map(({ label, to, end, icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            className={({ isActive }) => `flex min-h-[46px] shrink-0 items-center gap-3 rounded-lg px-4 text-left text-[0.82rem] transition-colors lg:w-full ${isActive ? 'admin-nav-active font-medium text-white' : 'text-[#B7AEA2] hover:bg-white/5 hover:text-white'}`}
-          >
-            {({ isActive }) => <>
-              <span className={isActive ? 'text-[#C6A15B]' : 'text-[#7E766B]'}>{icon}</span>
-              <span className="whitespace-nowrap">{label}</span>
-            </>}
-          </NavLink>
-        ))}
-      </nav>
-
-      <div className="hidden border-t border-white/10 p-4 lg:block">
-        <button type="button" onClick={onLogout} className="w-full rounded-full border border-white/15 px-4 py-2.5 text-[0.78rem] text-[#F1ECE4] transition hover:bg-white/10">
-          Log out
+        <button
+          type="button"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-expanded={menuOpen}
+          aria-controls="admin-mobile-menu"
+          aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/15 text-white transition hover:bg-white/10 lg:hidden"
+        >
+          {menuOpen ? (
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6 6 18" /></svg>
+          ) : (
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M4 7h16M4 12h16M4 17h16" /></svg>
+          )}
         </button>
       </div>
-      <button type="button" onClick={onLogout} className="m-3 shrink-0 rounded-full border border-white/15 px-4 py-2.5 text-sm text-[#F1ECE4] transition hover:bg-white/10 lg:hidden">
-        Log out
-      </button>
+
+      <div id="admin-mobile-menu" className={`${menuOpen ? 'flex' : 'hidden'} max-h-[calc(100dvh-72px)] flex-col lg:flex lg:max-h-none lg:flex-1`}>
+        <nav aria-label="Admin navigation" className="flex flex-col gap-0.5 overflow-y-auto p-3 lg:flex-1 lg:p-4">
+          {sections.map(({ label, to, end, icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              onClick={() => setMenuOpen(false)}
+              className={({ isActive }) => `flex min-h-[46px] items-center gap-3 rounded-lg px-4 text-left text-[0.82rem] transition-colors ${isActive ? 'admin-nav-active font-medium text-white' : 'text-[#B7AEA2] hover:bg-white/5 hover:text-white'}`}
+            >
+              {({ isActive }) => <>
+                <span className={isActive ? 'text-[#C6A15B]' : 'text-[#7E766B]'}>{icon}</span>
+                <span className="whitespace-nowrap">{label}</span>
+              </>}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="border-t border-white/10 p-4">
+          <button type="button" onClick={() => { setMenuOpen(false); onLogout() }} className="w-full rounded-full border border-white/15 px-4 py-2.5 text-[0.78rem] text-[#F1ECE4] transition hover:bg-white/10">
+            Log out
+          </button>
+        </div>
+      </div>
     </aside>
   )
 }

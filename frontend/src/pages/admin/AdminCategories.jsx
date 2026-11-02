@@ -190,10 +190,10 @@ function AdminCategories() {
       </section>
 
       {isFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 p-4">
           <form
             onSubmit={handleSubmit}
-            className="w-full max-w-md rounded-[1.1rem] bg-[#FFFDF9] p-6 shadow-xl"
+            className="my-auto w-full max-w-md rounded-[1.1rem] bg-[#FFFDF9] p-6 shadow-xl"
           >
             <h2 className="mb-5 text-xl font-semibold">
               {editingId ? 'Edit category' : 'Add category'}

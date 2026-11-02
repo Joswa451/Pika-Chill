@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { getMyProfile, updateMyProfile } from '../../features/profile/profileApi'
+import { getMyProfile, updateMyProfile, updateAccountEmail, updateAccountPassword } from '../../features/profile/profileApi'
 
 function CustomerProfile() {
   const [form, setForm] = useState({ full_name: '', contact_number: '' })
@@ -9,6 +9,12 @@ function CustomerProfile() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [newEmail, setNewEmail] = useState('')
+  const [emailPassword, setEmailPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [passwordConfirmation, setPasswordConfirmation] = useState('')
+  const [passwordCurrent, setPasswordCurrent] = useState('')
+  const [accountSaving, setAccountSaving] = useState(false)
 
   const loadProfile = useCallback(async () => {
     try {
@@ -48,6 +54,32 @@ function CustomerProfile() {
       window.dispatchEvent(new Event('pikachill-profile-updated'))
       setSuccess('Your profile has been saved.')
     } catch (err) { setError(err.message) } finally { setSaving(false) }
+  }
+
+  async function submitEmail(event) {
+    event.preventDefault(); setAccountSaving(true); setError(''); setSuccess('')
+    try {
+      const user = JSON.parse(sessionStorage.getItem('user') || 'null')
+      const updatedUser = await updateAccountEmail({ currentEmail: user?.email || email, currentPassword: emailPassword, email: newEmail.trim() })
+      if (updatedUser?.email) {
+        setEmail(updatedUser.email)
+        sessionStorage.setItem('user', JSON.stringify({ ...user, ...updatedUser }))
+      }
+      setEmailPassword(''); setNewEmail('')
+      setSuccess('Check your new email address for a confirmation link to complete the change.')
+    } catch (err) { setError(err.message || 'Failed to update email.') } finally { setAccountSaving(false) }
+  }
+
+  async function submitPassword(event) {
+    event.preventDefault()
+    if (newPassword !== passwordConfirmation) { setError('The new passwords do not match.'); return }
+    setAccountSaving(true); setError(''); setSuccess('')
+    try {
+      const user = JSON.parse(sessionStorage.getItem('user') || 'null')
+      await updateAccountPassword({ currentEmail: user?.email || email, currentPassword: passwordCurrent, password: newPassword })
+      setPasswordCurrent(''); setNewPassword(''); setPasswordConfirmation('')
+      setSuccess('Your password has been changed.')
+    } catch (err) { setError(err.message || 'Failed to update password.') } finally { setAccountSaving(false) }
   }
 
   return (
@@ -94,6 +126,27 @@ function CustomerProfile() {
 
           <button disabled={saving} className="btn btn-primary">{saving ? 'Saving…' : 'Save changes'}</button>
         </form>
+      )}
+
+      {!loading && !(error && !form.full_name) && (
+        <div className="mt-6 grid max-w-2xl gap-6">
+          <form onSubmit={submitEmail} className="card space-y-5 p-6 sm:p-8">
+            <div><h2 className="text-lg font-semibold text-[#211E1A]">Change email</h2><p className="mt-1 text-sm text-[#776F65]">We’ll send a confirmation link to your new address.</p></div>
+            <label className="block"><span className="field-label">New email address</span><input type="email" value={newEmail} onChange={(event) => setNewEmail(event.target.value)} required autoComplete="email" className="field" /></label>
+            <label className="block"><span className="field-label">Current password</span><input type="password" value={emailPassword} onChange={(event) => setEmailPassword(event.target.value)} required autoComplete="current-password" className="field" /></label>
+            <button disabled={accountSaving} className="btn btn-outline">{accountSaving ? 'Saving…' : 'Update email'}</button>
+          </form>
+
+          <form onSubmit={submitPassword} className="card space-y-5 p-6 sm:p-8">
+            <div><h2 className="text-lg font-semibold text-[#211E1A]">Change password</h2></div>
+            <label className="block"><span className="field-label">Current password</span><input type="password" value={passwordCurrent} onChange={(event) => setPasswordCurrent(event.target.value)} required autoComplete="current-password" className="field" /></label>
+            <label className="block"><span className="field-label">New password</span><input type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} required minLength={6} autoComplete="new-password" className="field" /></label>
+            <label className="block"><span className="field-label">Confirm new password</span><input type="password" value={passwordConfirmation} onChange={(event) => setPasswordConfirmation(event.target.value)} required minLength={6} autoComplete="new-password" className="field" /></label>
+            <button disabled={accountSaving} className="btn btn-outline">{accountSaving ? 'Saving…' : 'Update password'}</button>
+          </form>
+          {error && <p role="alert" className="rounded-xl bg-[#F8E9E6] p-3 text-sm text-[#9F3A32]">{error}</p>}
+          {success && <p className="rounded-xl bg-[#E8EDE7] p-3 text-sm text-[#2F3B33]">{success}</p>}
+        </div>
       )}
     </main>
   )

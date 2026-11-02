@@ -8,6 +8,7 @@ import AdminInventory from './AdminInventory'
 import AdminCustomers from './AdminCustomers'
 import AdminNotifications from './AdminNotifications'
 import AdminReports from './AdminReports'
+import AdminAccountSettings from './AdminAccountSettings'
 
 function AdminDashboard() {
   return (
@@ -21,6 +22,7 @@ function AdminDashboard() {
         <Route path="customers" element={<AdminCustomers />} />
         <Route path="notifications" element={<AdminNotifications />} />
         <Route path="reports" element={<AdminReports />} />
+        <Route path="account" element={<AdminAccountSettings />} />
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Route>
     </Routes>

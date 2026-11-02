@@ -25,3 +25,21 @@ export async function updateMyProfile(profile) {
     body: JSON.stringify(profile)
   }), 'Failed to update profile')
 }
+
+export async function updateAccountEmail({ currentPassword, email }) {
+  const result = await parseResponse(await authFetch(`${API_URL}/auth/email`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ currentPassword, email })
+  }), 'Failed to update email')
+  return result.user
+}
+
+export async function updateAccountPassword({ currentPassword, password }) {
+  const result = await parseResponse(await authFetch(`${API_URL}/auth/password`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ currentPassword, password })
+  }), 'Failed to update password')
+  return result.user
+}
