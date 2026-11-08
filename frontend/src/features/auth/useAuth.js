@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { registerRequest, loginRequest } from './authApi'
 
 function readStoredAuth() {
@@ -51,54 +51,53 @@ export function useAuth() {
   const [profile, setProfile] = useState(storedAuth.profile)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const requestRef = useRef(null)
 
-  async function register(formData) {
+  function runAuthRequest(execute) {
+    // A ref guard is synchronous, so a double-click cannot start two requests
+    // before React has re-rendered the disabled button.
+    if (requestRef.current) return requestRef.current
+
     setError(null)
     setLoading(true)
 
-    try {
-      const data = await registerRequest(formData)
-
-      if (data.user) {
-        setUser(data.user)
-        sessionStorage.setItem('user', JSON.stringify(data.user))
+    const promise = (async () => {
+      try {
+        return await execute()
+      } catch (err) {
+        setError(err.message || 'Something went wrong. Please try again.')
+        throw err
+      } finally {
+        requestRef.current = null
+        setLoading(false)
       }
+    })()
 
-      if (data.profile) {
-        setProfile(data.profile)
-        sessionStorage.setItem('profile', JSON.stringify(data.profile))
-      }
-
-      if (data.session) {
-        sessionStorage.setItem('session', JSON.stringify(data.session))
-      }
-
-      return data
-    } catch (err) {
-      setError(err.message)
-      throw err
-    } finally {
-      setLoading(false)
-    }
+    requestRef.current = promise
+    return promise
   }
 
-  async function login(formData) {
-    setError(null)
-    setLoading(true)
+  async function register(formData) {
+    const data = await runAuthRequest(() => registerRequest(formData))
 
-    try {
-      const data = await loginRequest(formData)
+    // When email confirmation is disabled Supabase returns a session and the
+    // user is signed in immediately. Otherwise keep the old session untouched.
+    if (data.session && data.user && data.profile) {
       storeLogin(data)
       setUser(data.user)
       setProfile(data.profile)
-
-      return data
-    } catch (err) {
-      setError(err.message)
-      throw err
-    } finally {
-      setLoading(false)
     }
+
+    return data
+  }
+
+  async function login(formData) {
+    const data = await runAuthRequest(() => loginRequest(formData))
+    storeLogin(data)
+    setUser(data.user)
+    setProfile(data.profile)
+
+    return data
   }
 
   function logout() {
@@ -110,6 +109,10 @@ export function useAuth() {
     setProfile(null)
   }
 
+  function clearError() {
+    setError(null)
+  }
+
   return {
     user,
     profile,
@@ -117,6 +120,7 @@ export function useAuth() {
     register,
     logout,
     loading,
-    error
+    error,
+    clearError
   }
 }

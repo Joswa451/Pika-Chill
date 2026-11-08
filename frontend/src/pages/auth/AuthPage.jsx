@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../features/auth/useAuth'
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 function AuthPage() {
-  const { login, register, loading, error } = useAuth()
+  const { login, register, loading, error, clearError } = useAuth()
   const navigate = useNavigate()
 
   const [isLogin, setIsLogin] = useState(true)
@@ -14,25 +16,71 @@ function AuthPage() {
     contactNumber: '',
   })
   const [result, setResult] = useState(null)
+  const [formError, setFormError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const submittingRef = useRef(false)
+
+  const busy = loading || submitting
+  const displayError = formError || error
 
   function handleChange(e) {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    })
+    const { name, value } = e.target
+    setForm((current) => ({
+      ...current,
+      [name]: value,
+    }))
+    if (formError) setFormError('')
+    if (error) clearError()
   }
 
   function switchMode(loginMode) {
     setIsLogin(loginMode)
     setResult(null)
+    setFormError('')
+    setSuccess('')
+    clearError()
+  }
+
+  function validateForm() {
+    const email = form.email.trim()
+
+    if (!email) return 'Enter your email address.'
+    if (!EMAIL_PATTERN.test(email)) return 'Enter a valid email address.'
+    if (!form.password) return 'Enter your password.'
+
+    if (!isLogin) {
+      if (!form.fullName.trim()) return 'Enter your full name.'
+      if (!form.contactNumber.trim()) return 'Enter your contact number.'
+      if (form.contactNumber.replace(/\D/g, '').length < 7) return 'Enter a valid contact number.'
+      if (form.password.length < 6) return 'Password must be at least 6 characters.'
+    }
+
+    return ''
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
 
+    if (submittingRef.current) return
+
+    const validationError = validateForm()
+    if (validationError) {
+      setFormError(validationError)
+      return
+    }
+
+    submittingRef.current = true
+    setSubmitting(true)
+    setFormError('')
+    setSuccess('')
+
     try {
       if (isLogin) {
-        const data = await login(form)
+        const data = await login({
+          ...form,
+          email: form.email.trim(),
+        })
         const role = data?.profile?.role
 
         if (role === 'customer') {
@@ -44,19 +92,36 @@ function AuthPage() {
           return
         }
 
+        setSuccess('Logged in successfully.')
         return
       }
 
-      await register(form)
+      const data = await register({
+        ...form,
+        email: form.email.trim(),
+        fullName: form.fullName.trim(),
+        contactNumber: form.contactNumber.trim(),
+      })
+      const role = data?.profile?.role
+
+      if (data?.session && role) {
+        navigate(role === 'admin' ? '/admin' : '/customer', { replace: true })
+        return
+      }
+
       setIsLogin(true)
       setForm({
-        email: '',
+        email: form.email.trim(),
         password: '',
         fullName: '',
         contactNumber: '',
       })
+      setSuccess('Account created successfully. Please log in with your new password.')
     } catch {
       // Error is handled by useAuth.
+    } finally {
+      submittingRef.current = false
+      setSubmitting(false)
     }
   }
 
@@ -100,7 +165,7 @@ function AuthPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             {!isLogin && (
               <div>
                 <label className="field-label">Full name</label>
@@ -110,6 +175,7 @@ function AuthPage() {
                   placeholder="Enter your full name"
                   onChange={handleChange}
                   required
+                  autoComplete="name"
                   className="field"
                 />
               </div>
@@ -124,6 +190,9 @@ function AuthPage() {
                 placeholder="you@gmail.com"
                 onChange={handleChange}
                 required
+                autoComplete="email"
+                autoCapitalize="none"
+                spellCheck={false}
                 className="field"
               />
             </div>
@@ -138,6 +207,7 @@ function AuthPage() {
                   placeholder="0917 000 0000"
                   onChange={handleChange}
                   required
+                  autoComplete="tel"
                   className="field"
                 />
               </div>
@@ -152,18 +222,25 @@ function AuthPage() {
                 placeholder={isLogin ? 'Enter your password' : 'Create a password'}
                 onChange={handleChange}
                 required
+                autoComplete={isLogin ? 'current-password' : 'new-password'}
                 className="field"
               />
             </div>
 
-            {error && (
-              <div className="rounded-xl border border-[#E6C3BE] bg-[#F8E9E6] px-4 py-3 text-sm text-[#9F3A32]">
-                {error}
+            {displayError && (
+              <div role="alert" className="rounded-xl border border-[#E6C3BE] bg-[#F8E9E6] px-4 py-3 text-sm text-[#9F3A32]">
+                {displayError}
               </div>
             )}
 
-            <button type="submit" disabled={loading} className="btn btn-primary mt-2 w-full py-3.5">
-              {loading
+            {success && (
+              <div role="status" className="rounded-xl border border-[#C9D6C9] bg-[#E8EDE7] px-4 py-3 text-sm text-[#2F3B33]">
+                {success}
+              </div>
+            )}
+
+            <button type="submit" disabled={busy} aria-busy={busy} className="btn btn-primary mt-2 w-full py-3.5">
+              {busy
                 ? 'Please wait...'
                 : isLogin
                   ? 'Log in'
