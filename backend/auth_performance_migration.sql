@@ -1,0 +1,12 @@
+-- Authentication performance indexes.
+--
+-- Supabase Auth already maintains a unique btree index on auth.users(email),
+-- so login and registration email lookups are indexed by default. Do not add a
+-- duplicate index there.
+--
+-- public.profiles.id is the primary key, so the auth -> profile lookup after a
+-- successful login is already an indexed single-row lookup.
+--
+-- The admin role check runs after token verification on admin routes. This
+-- supporting index keeps that lookup fast as the customer table grows.
+create index if not exists profiles_role_idx on public.profiles (role);
